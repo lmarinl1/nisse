@@ -1,0 +1,33 @@
+---
+description: Workspace, Canvas y Objetos Cognitivos NISSE
+globs: frontend/**/*
+alwaysApply: false
+---
+
+# Workspace & Cognitive Objects
+
+## Gramática
+
+```text
+Application → Workspace → Canvas + Tool Panels + Companion + Inspector + Timeline + Cognitive Objects
+```
+
+- Un Workspace = **una** investigación / pregunta; nunca mezclar investigaciones.
+- Canvas: pan/zoom/selección/conexiones; no ocultarlo detrás de formularios.
+- Tool Panels e Inspector son secundarios; Companion es investigador, no chatbot genérico.
+
+## Objetos Cognitivos (núcleo)
+
+Hipótesis, Escenario, Evidencia, Señal, Driver, Actor, Incertidumbre, Timeline, Cono de futuros, Relación.
+
+Cada uno debe poder: evolucionar, relacionarse, trazarse, visualizar confianza/estado.
+
+Anatomía mínima: id, nombre, descripción, contexto, autor, fecha, estado, confianza, relaciones, historial, etiquetas, evidencia.
+
+## Recetas (partir de estas, no de CRUD)
+
+Research Workspace · Grafo · Escenarios · Cono de futuros · Bitácora · Companion · Comparación · Biblioteca · Documental · Colaborativo.
+
+Nunca: listas/tablas/KPI boards como vista principal.
+
+Detalle: `docs/ux-framework/04-cognitive-objects.md`, `05-workspace-grammar.md`, `08-screen-recipes.md`.

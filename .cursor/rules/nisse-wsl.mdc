@@ -1,0 +1,47 @@
+---
+description: Obligatorio — todo comando, script e instrucción de terminal usa WSL2 (no PowerShell/CMD)
+alwaysApply: true
+---
+
+# Shell: solo WSL2
+
+**Innegociable:** cualquier comando de terminal (agente, docs, chat, scripts) se ejecuta en **WSL2**, nunca en PowerShell ni CMD nativos.
+
+## Distro
+
+Usar `Ubuntu-24.04` (WSL2):
+
+```bash
+wsl -d Ubuntu-24.04 -- bash -lc 'cd "/mnt/c/Users/lmari/OneDrive/Escritorio/Maestría/Codigo/nisse" && <comando>'
+```
+
+Si ya estás dentro de WSL, solo bash en el repo:
+
+```bash
+cd "/mnt/c/Users/lmari/OneDrive/Escritorio/Maestría/Codigo/nisse"
+```
+
+## Qué está prohibido
+
+- `.\.venv\Scripts\Activate.ps1`, `python.exe`, `copy`, `Get-ChildItem` como flujo de trabajo del proyecto
+- Invocar Node/npm instalados en Windows desde WSL (`/mnt/c/Program Files/nodejs`)
+- Documentar o sugerir comandos PowerShell para correr el monorepo
+
+## Paths
+
+| Windows | WSL |
+|---------|-----|
+| `C:\Users\...\nisse` | `/mnt/c/Users/lmari/OneDrive/Escritorio/Maestría/Codigo/nisse` |
+| `.venv\Scripts\python.exe` | `.venv/bin/python` |
+| `Activate.ps1` | `source .venv/bin/activate` |
+
+## Entorno Linux
+
+- Python: `.venv` **Linux** (`python3 -m venv .venv`) — setup: `scripts/setup-wsl.sh`
+- Node/npm/openspec: **nvm** dentro de WSL (`nvm use default`), nunca Node de Windows
+- Docker: CLI en WSL (Docker Desktop con integración WSL2)
+- Cargar nvm en shells no interactivas: `. "$HOME/.nvm/nvm.sh"`
+
+## En el chat
+
+Al dar instrucciones al usuario, escribir siempre comandos bash/WSL, no PowerShell.

@@ -1,0 +1,32 @@
+---
+description: Buenas prácticas de ingeniería del monorepo (OpenSpec, Django, React)
+alwaysApply: true
+---
+
+# Nisse — ingeniería
+
+## OpenSpec primero
+
+Features/comportamiento no trivial: `/opsx-propose` → `/opsx-apply` → `/opsx-archive`.  
+Specs: `openspec/specs/`. Changes: `openspec/changes/`. Un change si toca API + UI.
+
+## Código
+
+- Secretos solo en `.env`; sincronizar `.env.example`.
+- IDs en inglés; copy de producto en español (ver rules UX).
+- Sin deps/refactors colaterales.
+- API bajo `/api/`; actualizar `frontend/src/api/` si cambia el contrato.
+- Backend: vistas delgadas. Frontend: tipado estricto.
+
+## Shell
+
+Todo comando/script/instrucción de terminal: **WSL2** (`Ubuntu-24.04`). Ver `nisse-wsl.mdc`.
+
+## Stack
+
+`backend/`: Django 5.2 + DRF + MongoDB. `frontend/`: React 19 + Vite + TS. Mongo: `docker compose up -d` (desde WSL).
+
+## UX framework
+
+Rules activas (condensadas) en `.cursor/rules/nisse-*.mdc`.  
+Fuente completa: `docs/ux-framework/` — usar `@` cuando necesites el detalle.

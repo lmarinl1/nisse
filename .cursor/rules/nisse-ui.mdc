@@ -1,0 +1,41 @@
+---
+description: Lenguaje visual, tokens, componentes, motion, iconos y copy NISSE
+globs: frontend/**/*.{ts,tsx,css}
+alwaysApply: false
+---
+
+# UI Language
+
+## Atmósfera
+
+Observatorio / laboratorio / atlas. Neutros dominan; acento (amarillo) solo para intención. Mucho aire, un foco visual. Evitar gradientes llamativos y ruido.
+
+## Tokens (obligatorio)
+
+Sin hardcode de color/spacing/radius. Usar tokens semánticos, p. ej.:
+
+- `color.workspace.*`, `color.discovery.*`, `color.ai.*`
+- `color.scenario|hypothesis|evidence|signal|driver|uncertainty`
+- typography / spacing / radius / motion / z-index del sistema
+
+## Componentes
+
+Instrumentos, no widgets. Preferir Panel (no Card), Companion (no Chat), Workspace (no Page). Reutilizar antes de inventar variantes.
+
+Clases útiles: Foundation · Inputs · Navigation · Containers · AI · Research (ResearchPanel, Graph, Timeline, Scenario, Evidence…).
+
+Estados obligatorios: loading, empty, error, success, disabled.
+
+## Motion
+
+Animar con propósito (entrada suave, drawer slide, grafo incremental). No pop brusco, no spinner solo, respetar `prefers-reduced-motion`.
+
+## Iconos
+
+Metáforas de investigación (no empresariales). Tamaños del sistema; no centrar la UI en iconos.
+
+## Copy
+
+Voz de investigador: curioso, preciso, sereno. Companion propone, no ordena. Reconocer incertidumbre. Botones: Explorar, Relacionar, Comparar, Generar, Profundizar — no Guardar/Enviar/OK genéricos.
+
+Detalle: `docs/ux-framework/01-*.md` … `03`, `06`, `09`, `10`, `11`.

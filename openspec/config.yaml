@@ -1,0 +1,61 @@
+schema: spec-driven
+
+context: |
+  Project: NISSE — Speculative Research Workspace (monorepo).
+  Product metaphor: laboratory for thinking, not a dashboard/CRM/chat/admin tool.
+  Stack:
+    - Backend: Django 5.2 + DRF + django-mongodb-backend (MongoDB)
+    - Frontend: React 19 + TypeScript + Vite
+    - Specs: OpenSpec (propose → apply → archive)
+    - UX source of truth (full): docs/ux-framework/
+    - UX agent rules (condensed): .cursor/rules/nisse-*.mdc
+  Layout:
+    - backend/ — Django (`config`, `core`)
+    - frontend/ — Vite React TypeScript
+    - openspec/ — specs + changes
+    - docs/ux-framework/ — Design Language completo
+    - docker-compose.yml — MongoDB local
+  Conventions:
+    - ALL shell commands run in WSL2 (Ubuntu-24.04), never native PowerShell/CMD
+    - Repo in WSL: /mnt/c/Users/lmari/OneDrive/Escritorio/Maestría/Codigo/nisse
+    - Linux venv: source .venv/bin/activate (not Windows Scripts\)
+    - Spec-driven: no non-trivial feature without an OpenSpec change
+    - UI changes must respect Workspace grammar: Canvas protagonizes; Companion accompanies; Cognitive Objects are first-class
+    - Prefer Panel/Companion/Workspace naming; never Card1/PanelNuevo/generic CRUD screens
+    - Design tokens over hardcoded colors/spacing; uncertainty visible; context preserved
+    - Conventional commits preferred
+    - Secrets only in .env (never commit); keep .env.example in sync
+    - API under /api/; health at GET /api/health/
+    - Frontend uses VITE_API_BASE_URL
+    - Spanish OK for product copy; English for code identifiers
+    - When a change spans API + UI, one OpenSpec change covers both
+    - Tasks that include shell steps must document bash/WSL commands only
+
+rules:
+  proposal:
+    - Keep proposals under 500 words
+    - Always include a "Non-goals" section
+    - Call out whether the change touches backend, frontend, UX/workspace, or combinations
+    - If UI is involved, state the research question and Cognitive Objects affected
+    - Reject framing that sounds like CRM/dashboard/CRUD-as-main-view; reframe as Workspace
+  tasks:
+    - Break tasks into chunks of max 2 hours
+    - Separate backend and frontend checklist items when both are involved
+    - For UI work, include a checklist item verifying tokens + Canvas/Companion patterns
+  design:
+    - Note MongoDB/Django ORM constraints when relevant
+    - Document API contract changes explicitly
+    - For frontend: sketch Workspace layout (Canvas / panels / Companion) before component lists
+    - Point to docs/ux-framework/ sections when inventing new patterns (don't silently invent DS)
+
+operations:
+  apply:
+    guidance:
+      - Implement against tasks.md; mark items done as you go
+      - Keep test summaries concise
+      - Before finishing UI tasks, sanity-check against nisse-core / nisse-ui (laboratorio vs dashboard)
+  archive:
+    guidance:
+      - Summarize the archive outcome before finishing
+      - Ensure delta specs are merged into openspec/specs/
+      - If a UX pattern became standard, note whether docs/ux-framework/ should be updated later (don't invent docs casually)

@@ -1,0 +1,41 @@
+---
+description: Arquitectura React del frontend NISSE
+globs: frontend/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# React Architecture
+
+## Principios
+
+Composición · feature-first · componentes pequeños · estado local primero · global solo si se comparte.
+
+## Estructura
+
+```text
+src/app | features/{workspace,canvas,companion,scenarios,...} | shared/{components,hooks,tokens,utils,icons} | layouts | routes | styles
+```
+
+Cada feature: `components/ hooks/ services/ store/ types/ utils/ index.ts`
+
+Capas: Primitives → Composites → Domain (`ScenarioPanel`, `GraphCanvas`, `CompanionDrawer`…).
+
+## Estado y datos
+
+- Zustand: workspace, selección, UI, preferencias.
+- TanStack Query: remoto/IA/fuentes. Nunca cachear fetch a mano en el render.
+- Companion/LLM solo vía servicios (`llm.service`, etc.), nunca desde JSX.
+
+## Layout
+
+`WorkspaceLayout` = Sidebar + Canvas + Inspector + Companion. Rutas = workspaces (`/workspace/:id`), no CRUD.
+
+Canvas desacoplado: renderiza objetos; no conoce IA ni dominio.
+
+## Prohibido
+
+Componentes >300 líneas · lógica de negocio en JSX · estilos/colores inline · fetch en render · mezclar IA con presentación · duplicar estado.
+
+Stack de referencia: React, TS, Vite, Tailwind, Router, Query, Zustand, Motion, React Flow, TipTap.
+
+Detalle: `docs/ux-framework/12-react-architecture.md`.
