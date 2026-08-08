@@ -1,0 +1,28 @@
+/* NISSE icons — color via currentColor; sizes from docs/ux-framework/10-iconography.md */
+.nisse-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 1.5rem; /* 24 — acciones (default) */
+  height: 1.5rem;
+  vertical-align: middle;
+}
+
+.nisse-icon--sm {
+  width: 1rem; /* 16 — listas / tablas */
+  height: 1rem;
+}
+
+.nisse-icon--nav {
+  width: 1.25rem; /* 20 — navegación */
+  height: 1.25rem;
+}
+
+.nisse-icon--md {
+  width: 1.5rem; /* 24 — acciones */
+  height: 1.5rem;
+}
+
+.nisse-icon--lg {
+  width: 2rem; /* 32 — protagonismo */
+  height: 2rem;
+}

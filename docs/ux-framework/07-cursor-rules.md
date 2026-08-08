@@ -99,6 +99,20 @@ Siempre que sea posible:
 
 ------------------------------------------------------------------------
 
+# Reglas de Iconografía
+
+-   Usar solo el set oficial: `frontend/src/shared/icons`.
+-   Importar `Icon` o componentes `*Icon` desde el barrel; no librerías externas ni emojis.
+-   Si el concepto ya existe en el catálogo, reutilizarlo; no inventar otro glifo.
+-   Estilo del set: 24×24, stroke 2, `currentColor`, caps/joins round.
+-   Tamaños del sistema: 16 / 20 / 24 / 32 px. Color vía tokens (texto / discovery / estados).
+-   No hardcodear acentos del prototipo de iconos (`#D7FF2F`).
+-   Extender el set (SVG + registry + named) cuando falte un Objeto Cognitivo; actualizar `10-iconography.md`.
+
+Detalle: `docs/ux-framework/10-iconography.md`.
+
+------------------------------------------------------------------------
+
 # Código React
 
 Preferir:
@@ -209,6 +223,7 @@ Antes de finalizar validar:
 -   ¿Respeta los patrones?
 -   ¿Usa Objetos Cognitivos?
 -   ¿Usa Design Tokens?
+-   ¿Usa el set de iconos oficial (si hay iconografía)?
 -   ¿Es reutilizable?
 
 ------------------------------------------------------------------------

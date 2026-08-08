@@ -20,6 +20,8 @@ Cada feature: `components/ hooks/ services/ store/ types/ utils/ index.ts`
 
 Capas: Primitives → Composites → Domain (`ScenarioPanel`, `GraphCanvas`, `CompanionDrawer`…).
 
+Iconos: solo `shared/icons` (`Icon` / `*Icon`). Ver `docs/ux-framework/10-iconography.md`.
+
 ## Estado y datos
 
 - Zustand: workspace, selección, UI, preferencias.

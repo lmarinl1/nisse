@@ -79,7 +79,7 @@ Input
 
 Badge
 
-Icon
+Icon — importar desde `shared/icons` (`Icon` / `*Icon`). No librerías externas. Ver `10-iconography.md`.
 
 Typography
 

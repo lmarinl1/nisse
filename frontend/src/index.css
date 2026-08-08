@@ -1,4 +1,5 @@
 @import './shared/tokens/tokens.css';
+@import './shared/icons/icons.css';
 
 * {
   box-sizing: border-box;

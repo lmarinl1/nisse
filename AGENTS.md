@@ -42,6 +42,7 @@ Artifacts live under `openspec/changes/<name>/` (proposal, design, tasks, delta 
 - Match existing style; no drive-by refactors
 - Tests for non-trivial logic; keep them focused
 - UX: follow `.cursor/rules/nisse-*.mdc`; full Design Language in `docs/ux-framework/`
+- Icons: only `frontend/src/shared/icons` (see `docs/ux-framework/10-iconography.md`)
 
 ## Commands (WSL)
 

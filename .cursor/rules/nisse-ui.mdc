@@ -32,7 +32,12 @@ Animar con propósito (entrada suave, drawer slide, grafo incremental). No pop b
 
 ## Iconos
 
-Metáforas de investigación (no empresariales). Tamaños del sistema; no centrar la UI en iconos.
+Fuente única: `frontend/src/shared/icons` (`Icon`, `*Icon`). Outline 24×24, stroke 2, `currentColor`.
+
+- Reutilizar el catálogo; no Lucide/Heroicons/emojis ni SVG ad-hoc si ya existe el concepto.
+- Tamaños: 16 / 20 / 24 / 32 (`nisse-icon--sm|nav|md|lg`); color vía tokens, no hex del prototipo (`#D7FF2F`).
+- Metáforas de investigación (no empresariales). No centrar la UI en iconos.
+- Objetos Cognitivos: icono consistente (ver mapeo en `docs/ux-framework/10-iconography.md`).
 
 ## Copy
 

@@ -55,7 +55,7 @@ Cada componente documentará:
 ## Foundation
 
 -   Typography
--   Icon
+-   Icon (`shared/icons` — ver `10-iconography.md`)
 -   Divider
 -   Badge
 -   Tooltip

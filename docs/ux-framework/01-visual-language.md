@@ -278,6 +278,7 @@ Estilo:
 -   Outline predominante.
 -   Geometría simple.
 -   Peso consistente.
+-   Set oficial: `frontend/src/shared/icons` (24×24, stroke 2, `currentColor`).
 
 Los íconos deben representar conceptos de investigación:
 
@@ -287,6 +288,8 @@ Los íconos deben representar conceptos de investigación:
 -   documentar
 -   simular
 -   descubrir
+
+Normas completas, catálogo y mapeo a Objetos Cognitivos: `10-iconography.md`.
 
 ------------------------------------------------------------------------
 
