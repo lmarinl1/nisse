@@ -59,7 +59,8 @@ src/
 │   ├── hooks/
 │   ├── tokens/
 │   ├── utils/
-│   └── icons/
+│   ├── icons/          # iconos UI (line set)
+│   └── brand/          # NisseMark (logo); assets en public/brand/
 ├── layouts/
 ├── routes/
 └── styles/
@@ -80,6 +81,8 @@ Input
 Badge
 
 Icon — importar desde `shared/icons` (`Icon` / `*Icon`). No librerías externas. Ver `10-iconography.md`.
+
+Brand mark — `NisseMark` desde `shared/brand`; SVGs en `public/brand`. Ver `13-brand-mark.md`.
 
 Typography
 

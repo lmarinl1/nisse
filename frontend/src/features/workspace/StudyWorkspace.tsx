@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getStudy, type Study } from '../../shared/api/client'
+import { NisseBrandLockup } from '../../shared/brand'
+import { ArrowLeftIcon } from '../../shared/icons'
 import { WorkspaceCanvas } from '../canvas/WorkspaceCanvas'
 import './workspace.css'
 
@@ -40,7 +42,10 @@ export function StudyWorkspace() {
         <p className="form-error" role="alert">
           {error}
         </p>
-        <Link to="/">Volver a la biblioteca</Link>
+        <Link to="/" className="workspace__back">
+          <ArrowLeftIcon size="sm" />
+          Volver a la biblioteca
+        </Link>
       </main>
     )
   }
@@ -56,8 +61,10 @@ export function StudyWorkspace() {
   return (
     <div className="workspace">
       <aside className="workspace__rail" aria-label="Contexto de investigación">
+        <NisseBrandLockup size="compact" className="workspace__brand" />
         <Link to="/" className="workspace__back">
-          ← Biblioteca
+          <ArrowLeftIcon size="sm" />
+          Biblioteca
         </Link>
         <p className="eyebrow">Objeto de Estudio</p>
         <h1>{study.name}</h1>

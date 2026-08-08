@@ -1,0 +1,60 @@
+/* Brand mark clear-space helper — docs/ux-framework/13-brand-mark.md */
+.nisse-mark {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+  /* ~10% clear space of mark width */
+  margin: 0.1em;
+  object-fit: contain;
+}
+
+.nisse-mark--sm {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.nisse-mark--md {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.nisse-mark--lg {
+  width: 4rem;
+  height: 4rem;
+}
+
+.nisse-mark--hero {
+  width: 5.5rem;
+  height: 5.5rem;
+}
+
+.nisse-brand-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 2.5rem;
+}
+
+.nisse-brand-lockup .nisse-mark {
+  margin: 0;
+  /* clear space ≈ 10% of mark width */
+  margin-inline-end: 0.1em;
+}
+
+.nisse-brand-lockup__wordmark {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--color-text-primary);
+}
+
+.nisse-brand-lockup--compact {
+  gap: var(--space-2);
+  min-height: 1.5rem;
+}
+
+.nisse-brand-lockup--compact .nisse-brand-lockup__wordmark {
+  font-size: var(--font-size-h3);
+}

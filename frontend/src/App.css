@@ -6,12 +6,12 @@
   animation: nisse-emerge var(--motion-panel) var(--ease-out) both;
 }
 
-.diagnostics .brand {
-  margin: 0 0 var(--space-3);
-  font-family: var(--font-family-display);
+.diagnostics__brand {
+  margin: 0 0 var(--space-4);
+}
+
+.diagnostics__brand .nisse-brand-lockup__wordmark {
   font-size: var(--font-size-display);
-  letter-spacing: -0.03em;
-  font-weight: var(--font-weight-medium);
 }
 
 .diagnostics h1 {

@@ -5,13 +5,12 @@
   animation: nisse-emerge var(--motion-panel) var(--ease-out) both;
 }
 
-.auth-screen .brand {
-  margin: 0 0 var(--space-3);
-  font-family: var(--font-family-display);
+.auth-screen__brand {
+  margin: 0 0 var(--space-4);
+}
+
+.auth-screen__brand .nisse-brand-lockup__wordmark {
   font-size: var(--font-size-display);
-  letter-spacing: -0.03em;
-  line-height: 1;
-  font-weight: var(--font-weight-medium);
 }
 
 .auth-screen h1 {

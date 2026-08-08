@@ -34,6 +34,9 @@ frontend/src/shared/icons/
 └── index.ts       # barrel de importación
 ```
 
+Esto es **iconografía de interfaz**. El logo (telescopio) es otra capa:
+`frontend/public/brand` + `shared/brand` · `13-brand-mark.md`.
+
 Importar siempre desde el barrel:
 
 ``` tsx

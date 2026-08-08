@@ -72,6 +72,16 @@ color.research.active
 color.research.idle
 ```
 
+## Brand mark (logo)
+
+``` yaml
+color.brand.neon          # #D7FF2F — neon del telescopio
+color.brand.deep-space    # #05070A — fondo variantes dark
+```
+
+No confundir `color.brand.neon` con `color.discovery.primary` (acento de UI).
+Ver `13-brand-mark.md`.
+
 ## IA
 
 ``` yaml

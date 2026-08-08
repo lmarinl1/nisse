@@ -1,3 +1,5 @@
+import { PlusIcon } from '../../shared/icons'
+
 type Props = {
   onCreate: () => void
 }
@@ -14,7 +16,8 @@ export function StudyEmptyState({ onCreate }: Props) {
         futuros posibles. No administres proyectos: formula lo que quieres
         comprender.
       </p>
-      <button type="button" className="btn-discovery" onClick={onCreate}>
+      <button type="button" className="btn-discovery btn-with-icon" onClick={onCreate}>
+        <PlusIcon size="sm" />
         Formular la primera pregunta
       </button>
     </section>

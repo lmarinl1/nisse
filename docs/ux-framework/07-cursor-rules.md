@@ -113,6 +113,18 @@ Detalle: `docs/ux-framework/10-iconography.md`.
 
 ------------------------------------------------------------------------
 
+# Reglas de Brand Mark (logo)
+
+-   Assets: `frontend/public/brand`; componente: `NisseMark` (`shared/brand`).
+-   No tratar el telescopio como un icono del set UI.
+-   Preferir `official` en identidad; `favicon` en chrome compacto (sin estrellas).
+-   No redibujar, rotar, estirar ni cambiar el neon del mark.
+-   Clear space ≈ 10% del ancho.
+
+Detalle: `docs/ux-framework/13-brand-mark.md`.
+
+------------------------------------------------------------------------
+
 # Código React
 
 Preferir:
@@ -224,6 +236,7 @@ Antes de finalizar validar:
 -   ¿Usa Objetos Cognitivos?
 -   ¿Usa Design Tokens?
 -   ¿Usa el set de iconos oficial (si hay iconografía)?
+-   ¿Usa el brand mark oficial (si hay identidad / logo)?
 -   ¿Es reutilizable?
 
 ------------------------------------------------------------------------

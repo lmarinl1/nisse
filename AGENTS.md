@@ -43,6 +43,7 @@ Artifacts live under `openspec/changes/<name>/` (proposal, design, tasks, delta 
 - Tests for non-trivial logic; keep them focused
 - UX: follow `.cursor/rules/nisse-*.mdc`; full Design Language in `docs/ux-framework/`
 - Icons: only `frontend/src/shared/icons` (see `docs/ux-framework/10-iconography.md`)
+- Brand mark / logo: `frontend/public/brand` + `NisseMark` (`docs/ux-framework/13-brand-mark.md`)
 
 ## Commands (WSL)
 

@@ -39,3 +39,5 @@ import { Icon, HomeIcon, GraphIcon } from "../../shared/icons";
 3. Actualizar el catálogo en `docs/ux-framework/10-iconography.md`.
 
 No añadir Lucide u otras librerías de iconos.
+
+El logo de la app (telescopio) no vive aquí: ver `../brand/` y `docs/ux-framework/13-brand-mark.md`.

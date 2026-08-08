@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { Study } from '../../shared/api/client'
+import { ArrowRightIcon, MoreIcon, PlusIcon } from '../../shared/icons'
 
 type Props = {
   studies: Study[]
@@ -28,7 +29,8 @@ export function StudyLibrary({
             pensamiento donde lo dejaste.
           </p>
         </div>
-        <button type="button" className="btn-discovery" onClick={onCreate}>
+        <button type="button" className="btn-discovery btn-with-icon" onClick={onCreate}>
+          <PlusIcon size="sm" />
           Nueva pregunta
         </button>
       </header>
@@ -48,20 +50,23 @@ export function StudyLibrary({
                     Aún sin contexto escrito — la exploración puede empezar igual.
                   </p>
                 )}
-                <span className="research-panel__cta">Explorar Workspace →</span>
+                <span className="research-panel__cta">
+                  Explorar Workspace
+                  <ArrowRightIcon size="sm" />
+                </span>
               </Link>
 
               <div className="research-panel__tools">
                 <button
                   type="button"
-                  className="ghost"
+                  className="ghost icon-action"
                   aria-expanded={menuOpen}
                   aria-label="Más acciones"
                   onClick={() =>
                     setOpenMenuId(menuOpen ? null : study.id)
                   }
                 >
-                  Contexto
+                  <MoreIcon size="nav" />
                 </button>
                 {menuOpen && (
                   <div className="research-panel__menu" role="menu">

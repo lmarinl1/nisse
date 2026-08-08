@@ -24,6 +24,7 @@ Para profundidad en un chat, cita el archivo con `@docs/ux-framework/...`.
 | `07-cursor-rules.md` | Comportamiento del agente |
 | `08-screen-recipes.md` | Recetas de pantalla |
 | `09-motion-language.md` | Motion |
-| `10-iconography.md` | Iconografía |
+| `10-iconography.md` | Iconografía (UI) |
 | `11-copywriting.md` | Copy |
 | `12-react-architecture.md` | Arquitectura React |
+| `13-brand-mark.md` | Logo / brand mark (telescopio) |

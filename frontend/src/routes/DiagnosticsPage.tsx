@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { NisseBrandLockup } from '../shared/brand'
 import { fetchHealth, type HealthResponse } from '../shared/api/client'
 
 export function DiagnosticsPage() {
@@ -32,7 +33,7 @@ export function DiagnosticsPage() {
 
   return (
     <main className="diagnostics">
-      <p className="brand">NISSE</p>
+      <NisseBrandLockup size="entry" className="diagnostics__brand" />
       <h1>Diagnóstico</h1>
       <p className="lede">
         Comprobación técnica del backend. No forma parte del Workspace de

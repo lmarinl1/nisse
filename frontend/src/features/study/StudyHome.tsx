@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { NisseBrandLockup } from '../../shared/brand'
 import { ResearchNetworkAtmosphere } from '../atmosphere/ResearchNetworkAtmosphere'
 import { useAuth } from '../identity/AuthContext'
 import {
@@ -77,7 +78,7 @@ export function StudyHome() {
 
       <div className="study-home__content">
         <header className="study-home__top">
-          <p className="brand">NISSE</p>
+          <NisseBrandLockup size="entry" className="study-home__brand" />
           <div className="study-home__identity">
             <span className="study-home__designer">
               {profile?.display_name || profile?.username}

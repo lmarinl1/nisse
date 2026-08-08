@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import type { StudyInput } from '../../shared/api/client'
+import { CloseIcon } from '../../shared/icons'
 import './study-drawer.css'
 
 type Props = {
@@ -61,8 +62,13 @@ export function StudyCreateDrawer({
       <div className="study-drawer__panel">
         <header>
           <h2>{title}</h2>
-          <button type="button" className="ghost" onClick={onClose}>
-            Cerrar
+          <button
+            type="button"
+            className="ghost icon-action"
+            aria-label="Cerrar"
+            onClick={onClose}
+          >
+            <CloseIcon size="nav" />
           </button>
         </header>
         <p className="hint">

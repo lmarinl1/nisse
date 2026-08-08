@@ -33,6 +33,6 @@ Nunca: `Card1`, `PanelNuevo`, `ContainerFinal`.
 
 ## Checklist rápido
 
-¿Laboratorio o dashboard? ¿Tokens? ¿Contexto? ¿Objetos Cognitivos? ¿Iconos del set oficial (`shared/icons`)? Si parece otra app, rediseñar.
+¿Laboratorio o dashboard? ¿Tokens? ¿Contexto? ¿Objetos Cognitivos? ¿Iconos del set oficial (`shared/icons`)? ¿Brand mark (`public/brand` / `NisseMark`) cuando hay identidad? Si parece otra app, rediseñar.
 
 Detalle completo: `docs/ux-framework/` (citar con `@` si hace falta profundidad).

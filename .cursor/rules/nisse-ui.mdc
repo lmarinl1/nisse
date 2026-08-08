@@ -35,9 +35,17 @@ Animar con propósito (entrada suave, drawer slide, grafo incremental). No pop b
 Fuente única: `frontend/src/shared/icons` (`Icon`, `*Icon`). Outline 24×24, stroke 2, `currentColor`.
 
 - Reutilizar el catálogo; no Lucide/Heroicons/emojis ni SVG ad-hoc si ya existe el concepto.
-- Tamaños: 16 / 20 / 24 / 32 (`nisse-icon--sm|nav|md|lg`); color vía tokens, no hex del prototipo (`#D7FF2F`).
+- Tamaños: 16 / 20 / 24 / 32 (`nisse-icon--sm|nav|md|lg`); color vía tokens, no hex del prototipo (`#D7FF2F`) en iconos UI.
 - Metáforas de investigación (no empresariales). No centrar la UI en iconos.
 - Objetos Cognitivos: icono consistente (ver mapeo en `docs/ux-framework/10-iconography.md`).
+
+## Brand mark (logo)
+
+Telescopio oficial en `frontend/public/brand` · API `NisseMark` en `shared/brand`.
+
+- No confundir con iconos UI. Preferir `official` (identidad) / `favicon` (compacto).
+- No redibujar, rotar ni estirar; clear space ~10%. Neon de marca: `--color-brand-neon`.
+- Detalle: `docs/ux-framework/13-brand-mark.md`.
 
 ## Copy
 

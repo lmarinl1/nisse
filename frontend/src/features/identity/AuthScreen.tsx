@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { NisseBrandLockup } from '../../shared/brand'
 import { useAuth } from './AuthContext'
 import './auth.css'
 
@@ -41,7 +42,7 @@ export function AuthScreen({ mode }: { mode: Mode }) {
 
   return (
     <main className="auth-screen">
-      <p className="brand">NISSE</p>
+      <NisseBrandLockup size="entry" className="auth-screen__brand" />
       <h1>
         {mode === 'login'
           ? 'Volver al laboratorio'
