@@ -1,0 +1,13 @@
+.research-network-atmosphere {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.research-network-atmosphere__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

@@ -1,0 +1,82 @@
+.study-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-drawer);
+  display: grid;
+  justify-content: end;
+}
+
+.study-drawer__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-drawer-backdrop);
+  border: none;
+  background: color-mix(in srgb, #02060a 62%, transparent);
+  cursor: pointer;
+}
+
+.study-drawer__panel {
+  position: relative;
+  z-index: var(--z-drawer);
+  width: min(26rem, 100%);
+  height: 100%;
+  padding: var(--space-5);
+  background: var(--color-workspace-surface);
+  border-left: 1px solid var(--color-border-default);
+  animation: nisse-drawer-in var(--motion-drawer) var(--ease-out) both;
+  display: grid;
+  align-content: start;
+  gap: var(--space-4);
+}
+
+.study-drawer__panel header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.study-drawer__panel h2 {
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+}
+
+.study-drawer__panel .hint {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-caption);
+}
+
+.study-drawer__panel form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.study-drawer__panel label {
+  display: grid;
+  gap: var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-caption);
+}
+
+.optional {
+  opacity: 0.7;
+}
+
+.study-drawer__panel input,
+.study-drawer__panel textarea {
+  border: 1px solid var(--color-border-default);
+  background: var(--color-workspace-canvas);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  resize: vertical;
+}
+
+.study-drawer__panel input:focus,
+.study-drawer__panel textarea:focus {
+  outline: 2px solid color-mix(in srgb, var(--color-discovery-primary) 45%, transparent);
+  outline-offset: 1px;
+}

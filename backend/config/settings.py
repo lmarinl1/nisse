@@ -35,7 +35,8 @@ INSTALLED_APPS = [
     "django_mongodb_backend",
     "corsheaders",
     "rest_framework",
-    "core",
+    "rest_framework.authtoken",
+    "core.apps.CoreConfig",
 ]
 
 MIDDLEWARE = [
@@ -84,6 +85,7 @@ MIGRATION_MODULES = {
     "admin": "mongo_migrations.admin",
     "auth": "mongo_migrations.auth",
     "contenttypes": "mongo_migrations.contenttypes",
+    "authtoken": "mongo_migrations.authtoken",
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -117,6 +119,12 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PARSER_CLASSES": [
         "rest_framework.parsers.JSONParser",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
     ],
 }
 

@@ -1,0 +1,123 @@
+/**
+ * NISSE semantic design tokens
+ * Source: docs/ux-framework/01-visual-language.md, 06-design-tokens.md, 09-motion-language.md
+ */
+:root {
+  color-scheme: dark;
+
+  /* Workspace */
+  --color-workspace-background: #0c1014;
+  --color-workspace-surface: #141a21;
+  --color-workspace-panel: #1a222c;
+  --color-workspace-canvas: #10161d;
+
+  /* Research / discovery */
+  --color-discovery-primary: #e8c547;
+  --color-discovery-secondary: #c9a227;
+  --color-research-active: #e8c547;
+  --color-research-idle: #6b7585;
+
+  /* Text */
+  --color-text-primary: #e8edf2;
+  --color-text-secondary: #9aa5b5;
+  --color-text-muted: #6b7585;
+
+  /* Borders / elevation */
+  --color-border-default: color-mix(in srgb, var(--color-text-primary) 12%, transparent);
+  --color-border-subtle: color-mix(in srgb, var(--color-text-primary) 8%, transparent);
+  --shadow-elevated: 0 12px 40px color-mix(in srgb, #000 45%, transparent);
+
+  /* States */
+  --color-success: #6fbf8a;
+  --color-warning: #e0a85c;
+  --color-error: #e08a84;
+  --color-info: #6a9fcf;
+
+  /* AI (reserved) */
+  --color-ai-thinking: #8b9bb4;
+
+  /* Typography */
+  --font-family-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-family-primary: "Source Sans 3", "Segoe UI", sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --font-size-display: clamp(2.5rem, 7vw, 3.75rem);
+  --font-size-h1: clamp(1.75rem, 4vw, 2.35rem);
+  --font-size-h2: 1.25rem;
+  --font-size-h3: 1.05rem;
+  --font-size-body: 1rem;
+  --font-size-caption: 0.875rem;
+  --font-size-label: 0.75rem;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* Spacing (8px scale) */
+  --space-1: 0.25rem; /* 4 */
+  --space-2: 0.5rem; /* 8 */
+  --space-3: 0.75rem; /* 12 */
+  --space-4: 1rem; /* 16 */
+  --space-5: 1.5rem; /* 24 */
+  --space-6: 2rem; /* 32 */
+  --space-7: 2.5rem; /* 40 */
+  --space-8: 3rem; /* 48 */
+  --space-9: 4rem; /* 64 */
+
+  /* Radius */
+  --radius-sm: 0.25rem; /* 4 */
+  --radius-md: 0.5rem; /* 8 */
+  --radius-lg: 0.75rem; /* 12 */
+  --radius-xl: 1rem; /* 16 */
+
+  /* Motion */
+  --motion-hover: 120ms;
+  --motion-focus: 150ms;
+  --motion-drawer: 220ms;
+  --motion-panel: 250ms;
+  --motion-canvas: 400ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+
+  /* Z-index */
+  --z-drawer: 40;
+  --z-drawer-backdrop: 39;
+
+  /* App defaults */
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  background-color: var(--color-workspace-background);
+  background-image:
+    radial-gradient(
+      ellipse 80% 50% at 10% -10%,
+      color-mix(in srgb, var(--color-discovery-primary) 8%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 60% 40% at 90% 0%,
+      color-mix(in srgb, #2a3a55 35%, transparent),
+      transparent 50%
+    ),
+    linear-gradient(
+      165deg,
+      var(--color-workspace-background),
+      #0f151c 55%,
+      #0a0e12
+    );
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-hover: 1ms;
+    --motion-focus: 1ms;
+    --motion-drawer: 1ms;
+    --motion-panel: 1ms;
+    --motion-canvas: 1ms;
+  }
+}

@@ -1,97 +1,51 @@
-.app {
-  max-width: 42rem;
+.boot,
+.diagnostics {
+  max-width: 36rem;
   margin: 0 auto;
-  padding: 4rem 1.5rem 3rem;
-  animation: rise 700ms ease-out both;
+  padding: var(--space-8) var(--space-5);
+  animation: nisse-emerge var(--motion-panel) var(--ease-out) both;
 }
 
-.hero {
-  margin-bottom: 2.5rem;
-}
-
-.brand {
-  margin: 0 0 0.75rem;
-  font-family: var(--font-display);
-  font-size: clamp(2.5rem, 8vw, 4rem);
+.diagnostics .brand {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-display);
   letter-spacing: -0.03em;
-  line-height: 1;
+  font-weight: var(--font-weight-medium);
 }
 
-.hero h1 {
-  margin: 0 0 0.75rem;
-  font-size: clamp(1.35rem, 3vw, 1.75rem);
-  font-weight: 600;
+.diagnostics h1 {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-family-display);
+  font-weight: var(--font-weight-medium);
 }
 
-.lede {
-  margin: 0;
-  color: var(--muted);
-  max-width: 34ch;
+.diagnostics .lede {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-5);
 }
 
-.status {
-  border-top: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
-  padding-top: 1.5rem;
-  animation: fade 900ms ease-out 180ms both;
-}
-
-.status h2 {
-  margin: 0 0 0.75rem;
-  font-size: 0.95rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-}
-
-.status dl {
+.diagnostics dl {
   display: grid;
-  gap: 0.75rem;
-  margin: 0;
+  gap: var(--space-3);
 }
 
-.status dl > div {
+.diagnostics dl > div {
   display: grid;
   grid-template-columns: 8rem 1fr;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
-.status dt {
-  color: var(--muted);
+.diagnostics dt {
+  color: var(--color-text-secondary);
 }
 
-.status dd {
+.diagnostics dd {
   margin: 0;
-  color: var(--accent);
-  font-weight: 600;
+  color: var(--color-discovery-primary);
+  font-weight: var(--font-weight-semibold);
 }
 
-.error {
-  color: var(--danger);
-  margin: 0;
-}
-
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@media (max-width: 600px) {
-  .status dl > div {
-    grid-template-columns: 1fr;
-  }
+.loading-narrative {
+  color: var(--color-text-secondary);
 }
