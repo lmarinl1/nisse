@@ -255,7 +255,7 @@ Desde una shell WSL en la raíz del repo:
 ### 1. MongoDB
 
 ```bash
-docker compose up -d
+docker-compose up -d
 ```
 
 ### 2. Backend

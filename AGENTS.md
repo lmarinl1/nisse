@@ -29,7 +29,7 @@ Artifacts live under `openspec/changes/<name>/` (proposal, design, tasks, delta 
 | Shell | WSL2 Ubuntu-24.04 |
 | Backend | Django 5.2 + DRF + django-mongodb-backend |
 | Frontend | React 19 + TypeScript + Vite |
-| DB | MongoDB (`docker compose up -d` or Atlas URI) |
+| DB | MongoDB (`docker-compose up -d` or Atlas URI) |
 | Specs | OpenSpec |
 
 ## Good practices (always)
@@ -50,7 +50,7 @@ cd "/mnt/c/Users/lmari/OneDrive/Escritorio/Maestría/Codigo/nisse"
 . "$HOME/.nvm/nvm.sh"
 
 # MongoDB
-docker compose up -d
+docker-compose up -d
 
 # Backend
 source .venv/bin/activate
