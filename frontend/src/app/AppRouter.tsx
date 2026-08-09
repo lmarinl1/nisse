@@ -1,4 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import {
+  CaseFrameworkOverviewRoute,
+  CaseFrameworkSectionRoute,
+} from '../features/case-framework/CaseFrameworkRoutes'
 import { AuthProvider } from '../features/identity/AuthContext'
 import { AuthScreen } from '../features/identity/AuthScreen'
 import { StudyHome } from '../features/study/StudyHome'
@@ -22,6 +26,14 @@ export function AppRouter() {
               <Route
                 index
                 element={<Navigate to={DEFAULT_RESEARCH_SESSION} replace />}
+              />
+              <Route
+                path="case-framework"
+                element={<CaseFrameworkOverviewRoute />}
+              />
+              <Route
+                path="case-framework/:section"
+                element={<CaseFrameworkSectionRoute />}
               />
               <Route path=":session" element={<ResearchSessionCanvas />} />
             </Route>

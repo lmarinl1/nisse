@@ -10,6 +10,7 @@ export {
   CandidatesIcon,
   ChatIcon,
   CheckIcon,
+  ChevronDownIcon,
   CloseIcon,
   DecisionIcon,
   DocumentIcon,

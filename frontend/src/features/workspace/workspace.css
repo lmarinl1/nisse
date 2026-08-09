@@ -2,7 +2,7 @@
   min-height: 100vh;
   height: 100vh;
   display: grid;
-  grid-template-columns: minmax(14rem, 17rem) 1fr minmax(12rem, 15rem);
+  grid-template-columns: minmax(14rem, 17rem) 1fr minmax(14rem, 17rem);
   background: var(--color-workspace-background);
   animation: nisse-fade var(--motion-canvas) var(--ease-out) both;
 }

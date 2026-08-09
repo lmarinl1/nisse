@@ -154,3 +154,52 @@ export async function updateStudy(
 export async function archiveStudy(id: string): Promise<Study> {
   return apiFetch<Study>(`/studies/${id}/archive/`, { method: 'POST' })
 }
+
+export type CaseFrameworkProgressStatus =
+  | 'not_started'
+  | 'in_progress'
+  | 'with_content'
+  | 'reviewed'
+
+export type CaseFrameworkSection = {
+  id: string
+  section_type: string
+  fields: Record<string, string>
+  reviewed: boolean
+  status: CaseFrameworkProgressStatus
+  created_at: string
+  updated_at: string
+}
+
+export type CaseFramework = {
+  id: string
+  study_id: string
+  sections: CaseFrameworkSection[]
+  created_at: string
+  updated_at: string
+}
+
+export type CaseFrameworkSectionPatch = {
+  fields?: Record<string, string>
+  reviewed?: boolean
+}
+
+export async function getCaseFramework(
+  studyId: string,
+): Promise<CaseFramework> {
+  return apiFetch<CaseFramework>(`/studies/${studyId}/case-framework/`)
+}
+
+export async function patchCaseFrameworkSection(
+  studyId: string,
+  sectionType: string,
+  patch: CaseFrameworkSectionPatch,
+): Promise<CaseFrameworkSection> {
+  return apiFetch<CaseFrameworkSection>(
+    `/studies/${studyId}/case-framework/sections/${sectionType}/`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify(patch),
+    },
+  )
+}

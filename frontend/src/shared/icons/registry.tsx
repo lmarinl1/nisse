@@ -34,6 +34,10 @@ function CheckIcon() {
   return (<><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></>);
 }
 
+function ChevronDownIcon() {
+  return (<><path d="m6 9 6 6 6-6"/></>);
+}
+
 function CloseIcon() {
   return (<><path d="m6 6 12 12M18 6 6 18"/></>);
 }
@@ -144,6 +148,7 @@ export const icons = {
   "candidates": CandidatesIcon,
   "chat": ChatIcon,
   "check": CheckIcon,
+  "chevron-down": ChevronDownIcon,
   "close": CloseIcon,
   "decision": DecisionIcon,
   "document": DocumentIcon,

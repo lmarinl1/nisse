@@ -98,6 +98,17 @@ export function studySessionPath(
   return `/studies/${studyId}/${session}`
 }
 
+export function caseFrameworkPath(studyId: string): string {
+  return `/studies/${studyId}/case-framework`
+}
+
+export function caseFrameworkSectionPath(
+  studyId: string,
+  section: string,
+): string {
+  return `/studies/${studyId}/case-framework/${section}`
+}
+
 export function getResearchSession(
   id: ResearchSessionId,
 ): ResearchSession | undefined {

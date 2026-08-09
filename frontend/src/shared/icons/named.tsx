@@ -42,6 +42,10 @@ export function CheckIcon(props: NamedIconProps) {
   return <Icon name="check" {...props} />;
 }
 
+export function ChevronDownIcon(props: NamedIconProps) {
+  return <Icon name="chevron-down" {...props} />;
+}
+
 export function CloseIcon(props: NamedIconProps) {
   return <Icon name="close" {...props} />;
 }

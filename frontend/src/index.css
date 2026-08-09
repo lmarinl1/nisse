@@ -6,6 +6,71 @@
   box-sizing: border-box;
 }
 
+/* Global discovery capsule scrollbar (line + yellow thumb) */
+html,
+body,
+#root,
+.workspace,
+.case-framework,
+.research-session-nav,
+.case-framework__drawer-body,
+.md-research-editor__preview,
+.md-research-editor__input {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#root::-webkit-scrollbar,
+.workspace::-webkit-scrollbar,
+.case-framework::-webkit-scrollbar,
+.research-session-nav::-webkit-scrollbar,
+.case-framework__drawer-body::-webkit-scrollbar,
+.md-research-editor__preview::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+#root::-webkit-scrollbar-track,
+.workspace::-webkit-scrollbar-track,
+.case-framework::-webkit-scrollbar-track,
+.research-session-nav::-webkit-scrollbar-track,
+.case-framework__drawer-body::-webkit-scrollbar-track,
+.md-research-editor__preview::-webkit-scrollbar-track {
+  background: transparent;
+  border-left: 1px solid var(--scrollbar-track-line);
+  margin-block: var(--space-2);
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+#root::-webkit-scrollbar-thumb,
+.workspace::-webkit-scrollbar-thumb,
+.case-framework::-webkit-scrollbar-thumb,
+.research-session-nav::-webkit-scrollbar-thumb,
+.case-framework__drawer-body::-webkit-scrollbar-thumb,
+.md-research-editor__preview::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 999px;
+  min-height: 1.75rem;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover,
+#root::-webkit-scrollbar-thumb:hover,
+.workspace::-webkit-scrollbar-thumb:hover,
+.case-framework::-webkit-scrollbar-thumb:hover,
+.research-session-nav::-webkit-scrollbar-thumb:hover,
+.case-framework__drawer-body::-webkit-scrollbar-thumb:hover,
+.md-research-editor__preview::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
 body {
   margin: 0;
   min-width: 320px;

@@ -36,6 +36,13 @@
   --color-warning: #e0a85c;
   --color-error: #e08a84;
   --color-info: #6a9fcf;
+  --color-status-success: var(--color-success);
+
+  /* Scrollbar — line + discovery capsule/circle (docs/ux-framework/01-visual-language.md) */
+  --scrollbar-size: 4px;
+  --scrollbar-thumb: color-mix(in srgb, var(--color-discovery-primary) 70%, transparent);
+  --scrollbar-thumb-hover: color-mix(in srgb, var(--color-discovery-primary) 90%, transparent);
+  --scrollbar-track-line: color-mix(in srgb, var(--color-discovery-primary) 28%, transparent);
 
   /* AI (reserved) */
   --color-ai-thinking: #8b9bb4;
