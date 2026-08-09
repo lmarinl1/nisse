@@ -2,10 +2,12 @@ import { useEffect, useRef } from 'react'
 import './research-network-atmosphere.css'
 
 type Density = 'sparse' | 'medium'
+type Layout = 'study' | 'auth'
 
 type Props = {
   className?: string
   density?: Density
+  layout?: Layout
   variant?: 'orbital'
 }
 
@@ -25,8 +27,56 @@ type Edge = {
   growing: boolean
 }
 
+type CoreParticle = {
+  angle: number
+  radius: number
+  speed: number
+  size: number
+  phase: number
+  life: number
+  maxLife: number
+  growing: boolean
+}
+
+const RING_COUNT = 9
+const RING_INNER = 0.12
+const RING_STEP = 0.085
+const OUTER_RING = RING_INNER + (RING_COUNT - 1) * RING_STEP
+const RING_STROKE = 0.65
+const EDGE_STROKE = 0.7
+const FIELD_SCALE = 0.6
+/** Vertical squash on orbital ellipses — used when converting ring step to pixels. */
+const ORBIT_Y_FACTOR = 0.92
+
+const LAYOUT_CENTER: Record<Layout, { x: number; y: number }> = {
+  study: { x: 0.62, y: 0.48 },
+  auth: { x: 0.5, y: 0.46 },
+}
+
 function nodeCount(density: Density): number {
-  return density === 'medium' ? 64 : 48
+  // ×3 vs pre-micro densification; sparse/medium ratio preserved.
+  return density === 'medium' ? 264 : 216
+}
+
+function extraOrbitalCount(density: Density): number {
+  return density === 'medium' ? 54 : 42
+}
+
+function coreParticleCount(density: Density): number {
+  // Mild bump over prior micro-node nucleus (~+25%).
+  return density === 'medium' ? 180 : 140
+}
+
+function maxEdgeCount(density: Density): number {
+  return density === 'medium' ? 156 : 126
+}
+
+function ringRadius(ring: number): number {
+  return RING_INNER + (ring - 1) * RING_STEP
+}
+
+function fairSharePerRing(density: Density): number {
+  return Math.max(1, Math.round(nodeCount(density) / RING_COUNT))
 }
 
 function parseCssColor(value: string): { r: number; g: number; b: number } {
@@ -56,7 +106,6 @@ function brightenDiscovery(color: {
   g: number
   b: number
 }): { r: number; g: number; b: number } {
-  // Local draw boost toward a clearer lime without changing global tokens.
   const lime = { r: 223, g: 255, b: 80 }
   const t = 0.45
   return {
@@ -73,10 +122,61 @@ function rgba(
   return `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`
 }
 
-const FIELD_CENTER_X = 0.62
-const FIELD_CENTER_Y = 0.48
-/** ~60% of the shorter viewport side for the orbital field. */
-const FIELD_SCALE = 0.6
+function makeNodeOnRing(ring: number): Node {
+  return {
+    angle: Math.random() * Math.PI * 2,
+    radius: ringRadius(ring) + Math.random() * 0.03,
+    speed:
+      (0.00007 + Math.random() * 0.00011) * (Math.random() > 0.5 ? 1 : -1),
+    size: 0.53 + Math.random() * 0.73,
+    phase: Math.random() * Math.PI * 2,
+  }
+}
+
+/** Rings 1–2 get ×5 of a fair per-ring share; remaining fill rings 3–9. */
+function buildOrbitalNodes(density: Density): Node[] {
+  const n = nodeCount(density)
+  const fair = fairSharePerRing(density)
+  const innerPerRing = fair * 5
+  const nodes: Node[] = []
+  for (let i = 0; i < innerPerRing; i += 1) {
+    nodes.push(makeNodeOnRing(1))
+  }
+  for (let i = 0; i < innerPerRing; i += 1) {
+    nodes.push(makeNodeOnRing(2))
+  }
+  const outerBudget = Math.max(0, n - 2 * fair)
+  const outerRingSpan = RING_COUNT - 2
+  for (let i = 0; i < outerBudget; i += 1) {
+    const ring = 3 + (i % outerRingSpan)
+    nodes.push(makeNodeOnRing(ring))
+  }
+  return nodes
+}
+
+function makeExtraOrbitalNode(i: number): Node {
+  return {
+    angle: Math.random() * Math.PI * 2,
+    radius: OUTER_RING + 0.06 + Math.random() * 0.14,
+    speed: (0.00005 + Math.random() * 0.00009) * (i % 2 === 0 ? -1 : 1),
+    size: 0.47 + Math.random() * 0.6,
+    phase: Math.random() * Math.PI * 2,
+  }
+}
+
+function makeCoreParticle(): CoreParticle {
+  return {
+    angle: Math.random() * Math.PI * 2,
+    // Tighter nucleus for denser center dust.
+    radius: 0.012 + Math.pow(Math.random(), 2.1) * 0.14,
+    speed: (0.0001 + Math.random() * 0.00018) * (Math.random() > 0.5 ? 1 : -1),
+    size: 0.27 + Math.random() * 0.53,
+    phase: Math.random() * Math.PI * 2,
+    life: Math.random() * 600,
+    maxLife: 1400 + Math.random() * 2200,
+    growing: Math.random() > 0.35,
+  }
+}
 
 /**
  * Contemplative orbital network atmosphere.
@@ -85,6 +185,7 @@ const FIELD_SCALE = 0.6
 export function ResearchNetworkAtmosphere({
   className,
   density = 'sparse',
+  layout = 'study',
   variant = 'orbital',
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -114,19 +215,25 @@ export function ResearchNetworkAtmosphere({
       ),
     )
 
-    const count = nodeCount(density)
-    const nodes: Node[] = Array.from({ length: count }, (_, i) => {
-      const ring = (i % 5) + 1
-      return {
-        angle: Math.random() * Math.PI * 2,
-        radius: 0.12 + ring * 0.12 + Math.random() * 0.04,
-        speed: (0.00008 + Math.random() * 0.00012) * (i % 2 === 0 ? 1 : -1),
-        size: 1.8 + Math.random() * 2.4,
-        phase: Math.random() * Math.PI * 2,
-      }
-    })
+    const center = LAYOUT_CENTER[layout]
+    const orbital = buildOrbitalNodes(density)
+    const extras = Array.from({ length: extraOrbitalCount(density) }, (_, i) =>
+      makeExtraOrbitalNode(i),
+    )
+    const nodes: Node[] = [...orbital, ...extras]
+    const cores: CoreParticle[] = Array.from(
+      { length: coreParticleCount(density) },
+      () => makeCoreParticle(),
+    )
     const edges: Edge[] = []
-    const maxEdges = density === 'medium' ? 36 : 24
+    const maxEdges = maxEdgeCount(density)
+    const edgeAlphaScale = layout === 'auth' ? 0.55 : 0.65
+
+    const fieldCenter = () => ({
+      cx: width * center.x,
+      cy: height * center.y,
+      scale: Math.min(width, height) * FIELD_SCALE,
+    })
 
     const resize = () => {
       const parent = surface.parentElement
@@ -151,20 +258,32 @@ export function ResearchNetworkAtmosphere({
     }
 
     const nodeXY = (node: Node) => {
-      const cx = width * FIELD_CENTER_X
-      const cy = height * FIELD_CENTER_Y
-      const scale = Math.min(width, height) * FIELD_SCALE
-      const wobble = Math.sin(performance.now() * 0.0004 + node.phase) * 0.012
+      const { cx, cy, scale } = fieldCenter()
+      const wobble = Math.sin(performance.now() * 0.0004 + node.phase) * 0.01
       const r = (node.radius + wobble) * scale
       return {
         x: cx + Math.cos(node.angle) * r,
-        y: cy + Math.sin(node.angle) * r * 0.92,
+        y: cy + Math.sin(node.angle) * r * ORBIT_Y_FACTOR,
       }
     }
 
-    const maybeSpawnEdge = () => {
-      if (edges.length >= maxEdges || Math.random() > 0.045) {
-        return
+    const coreXY = (particle: CoreParticle) => {
+      const { cx, cy, scale } = fieldCenter()
+      const wobble =
+        Math.sin(performance.now() * 0.00055 + particle.phase) * 0.008
+      const r = (particle.radius + wobble) * scale
+      return {
+        x: cx + Math.cos(particle.angle) * r,
+        y: cy + Math.sin(particle.angle) * r * ORBIT_Y_FACTOR,
+      }
+    }
+
+    /** Max edge length = radial distance between two consecutive orbits. */
+    const maxEdgeLengthPx = () => fieldCenter().scale * RING_STEP
+
+    const trySpawnOneEdge = () => {
+      if (edges.length >= maxEdges) {
+        return false
       }
       const a = Math.floor(Math.random() * nodes.length)
       let b = Math.floor(Math.random() * nodes.length)
@@ -173,42 +292,76 @@ export function ResearchNetworkAtmosphere({
       }
       const pa = nodeXY(nodes[a])
       const pb = nodeXY(nodes[b])
-      const dx = pa.x - pb.x
-      const dy = pa.y - pb.y
-      const dist = Math.hypot(dx, dy)
-      if (dist > Math.min(width, height) * 0.38) {
-        return
+      const dist = Math.hypot(pa.x - pb.x, pa.y - pb.y)
+      if (dist > maxEdgeLengthPx()) {
+        return false
       }
       edges.push({
         a,
         b,
         life: 0,
-        maxLife: 1800 + Math.random() * 2800,
+        maxLife: 1600 + Math.random() * 2400,
         growing: true,
       })
+      return true
+    }
+
+    const maybeSpawnEdge = () => {
+      // More attempts: short inter-orbit edges reject often; keep the concurrent cap filled.
+      for (let attempt = 0; attempt < 6; attempt += 1) {
+        if (edges.length >= maxEdges) {
+          break
+        }
+        if (Math.random() > 0.35) {
+          continue
+        }
+        trySpawnOneEdge()
+      }
+    }
+
+    const updateCores = (moving: boolean) => {
+      if (!moving) {
+        return
+      }
+      for (let i = 0; i < cores.length; i += 1) {
+        const particle = cores[i]
+        particle.angle += particle.speed * 16
+        if (particle.growing) {
+          particle.life += 16
+          if (particle.life >= particle.maxLife * 0.55) {
+            particle.growing = false
+          }
+        } else {
+          particle.life -= 14
+          if (particle.life <= 0) {
+            cores[i] = makeCoreParticle()
+            cores[i].life = 0
+            cores[i].growing = true
+          }
+        }
+      }
     }
 
     const drawFrame = (moving: boolean) => {
       context.clearRect(0, 0, width, height)
 
-      const cx = width * FIELD_CENTER_X
-      const cy = height * FIELD_CENTER_Y
-      const scale = Math.min(width, height) * FIELD_SCALE
+      const { cx, cy, scale } = fieldCenter()
       const now = performance.now()
 
-      for (let ring = 1; ring <= 5; ring += 1) {
+      for (let ring = 1; ring <= RING_COUNT; ring += 1) {
+        const rr = ringRadius(ring)
         context.beginPath()
         context.ellipse(
           cx,
           cy,
-          scale * (0.12 + ring * 0.12),
-          scale * (0.12 + ring * 0.12) * 0.92,
+          scale * rr,
+          scale * rr * ORBIT_Y_FACTOR,
           0,
           0,
           Math.PI * 2,
         )
-        context.strokeStyle = rgba(color, 0.16)
-        context.lineWidth = 1.25
+        context.strokeStyle = rgba(color, 0.12)
+        context.lineWidth = RING_STROKE
         context.stroke()
       }
 
@@ -230,19 +383,35 @@ export function ResearchNetworkAtmosphere({
         }
       }
 
+      updateCores(moving)
+
+      for (const particle of cores) {
+        const peak = particle.maxLife * 0.55
+        const alpha =
+          (particle.growing
+            ? Math.min(1, particle.life / peak)
+            : Math.max(0, particle.life / peak)) *
+          (0.22 + (1 - particle.radius / 0.2) * 0.35)
+        const { x, y } = coreXY(particle)
+        context.beginPath()
+        context.arc(x, y, particle.size, 0, Math.PI * 2)
+        context.fillStyle = rgba(color, alpha)
+        context.fill()
+      }
+
       for (const edge of edges) {
         const pa = nodeXY(nodes[edge.a])
         const pb = nodeXY(nodes[edge.b])
         const peak = edge.maxLife * 0.45
         const alpha =
           edge.growing
-            ? Math.min(1, edge.life / peak) * 0.65
-            : Math.max(0, edge.life / peak) * 0.65
+            ? Math.min(1, edge.life / peak) * edgeAlphaScale
+            : Math.max(0, edge.life / peak) * edgeAlphaScale
         context.beginPath()
         context.moveTo(pa.x, pa.y)
         context.lineTo(pb.x, pb.y)
         context.strokeStyle = rgba(color, alpha)
-        context.lineWidth = 1.25
+        context.lineWidth = EDGE_STROKE
         context.stroke()
       }
 
@@ -254,7 +423,7 @@ export function ResearchNetworkAtmosphere({
         const pulse = 0.55 + Math.sin(now * 0.0015 + node.phase) * 0.25
         context.beginPath()
         context.arc(x, y, node.size, 0, Math.PI * 2)
-        context.fillStyle = rgba(color, 0.5 + pulse * 0.35)
+        context.fillStyle = rgba(color, 0.48 + pulse * 0.35)
         context.fill()
       }
 
@@ -264,9 +433,10 @@ export function ResearchNetworkAtmosphere({
         0,
         cx,
         cy,
-        scale * 0.42,
+        scale * 0.4,
       )
-      gradient.addColorStop(0, rgba(color, 0.16))
+      gradient.addColorStop(0, rgba(color, 0.18))
+      gradient.addColorStop(0.45, rgba(color, 0.06))
       gradient.addColorStop(1, rgba(color, 0))
       context.fillStyle = gradient
       context.fillRect(0, 0, width, height)
@@ -282,14 +452,18 @@ export function ResearchNetworkAtmosphere({
 
     const drawStatic = () => {
       edges.length = 0
-      for (let i = 0; i < Math.min(10, maxEdges); i += 1) {
+      for (let i = 0; i < Math.min(48, maxEdges); i += 1) {
         edges.push({
-          a: i,
-          b: (i + 3) % nodes.length,
+          a: i % nodes.length,
+          b: (i + 2) % nodes.length,
           life: 800,
           maxLife: 1600,
           growing: false,
         })
+      }
+      for (const particle of cores) {
+        particle.life = particle.maxLife * 0.4
+        particle.growing = false
       }
       drawFrame(false)
     }
@@ -339,7 +513,7 @@ export function ResearchNetworkAtmosphere({
       document.removeEventListener('visibilitychange', onVisibility)
       reducedMotion.removeEventListener('change', onMotionChange)
     }
-  }, [density])
+  }, [density, layout])
 
   return (
     <div

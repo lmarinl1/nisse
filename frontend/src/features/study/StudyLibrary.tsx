@@ -22,7 +22,7 @@ export function StudyLibrary({
     <section className="study-library" aria-labelledby="library-title">
       <header className="study-library__header">
         <div>
-          <p className="eyebrow">Biblioteca de investigación</p>
+          <p className="eyebrow">Campo de investigación</p>
           <h1 id="library-title">¿Qué estás explorando?</h1>
           <p className="lede">
             Cada Objeto de Estudio es un Workspace. Abre uno para continuar el

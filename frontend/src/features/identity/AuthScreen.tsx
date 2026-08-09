@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { NisseBrandLockup } from '../../shared/brand'
+import { ResearchNetworkAtmosphere } from '../atmosphere/ResearchNetworkAtmosphere'
 import { useAuth } from './AuthContext'
 import './auth.css'
 
@@ -42,61 +43,70 @@ export function AuthScreen({ mode }: { mode: Mode }) {
 
   return (
     <main className="auth-screen">
-      <NisseBrandLockup size="entry" className="auth-screen__brand" />
-      <h1>
-        {mode === 'login'
-          ? 'Volver al laboratorio'
-          : 'Preparar tu espacio de investigación'}
-      </h1>
-      <p className="lede">
-        Speculative Research Workspace para Diseñadores de Futuros. Aquí se
-        exploran preguntas, no se administran tareas.
-      </p>
-      <form className="auth-form" onSubmit={onSubmit}>
-        <label>
-          Usuario
-          <input
-            autoComplete="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          Contraseña
-          <input
-            type="password"
-            autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={8}
-          />
-        </label>
-        {error && (
-          <p className="form-error" role="alert">
-            {error}
-          </p>
-        )}
-        <button type="submit" className="btn-discovery" disabled={pending}>
-          {pending
-            ? 'Abriendo el laboratorio…'
-            : mode === 'login'
-              ? 'Entrar a explorar'
-              : 'Comenzar a explorar'}
-        </button>
-      </form>
-      <p className="auth-switch">
-        {mode === 'login' ? (
-          <>
-            ¿Primera vez aquí? <Link to="/register">Crear perfil</Link>
-          </>
-        ) : (
-          <>
-            ¿Ya tienes un espacio? <Link to="/login">Entrar</Link>
-          </>
-        )}
-      </p>
+      <div className="auth-screen__atmosphere" aria-hidden="true">
+        <ResearchNetworkAtmosphere density="sparse" layout="auth" />
+        <div className="auth-screen__vignette" />
+      </div>
+
+      <div className="auth-screen__content">
+        <NisseBrandLockup size="entry" className="auth-screen__brand" />
+        <h1>
+          {mode === 'login'
+            ? 'Volver al laboratorio'
+            : 'Preparar tu espacio de investigación'}
+        </h1>
+        <p className="lede">
+          Speculative Research Workspace para Diseñadores de Futuros. Aquí se
+          exploran preguntas, no se administran tareas.
+        </p>
+        <form className="auth-form" onSubmit={onSubmit}>
+          <label>
+            Usuario
+            <input
+              autoComplete="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Contraseña
+            <input
+              type="password"
+              autoComplete={
+                mode === 'login' ? 'current-password' : 'new-password'
+              }
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={8}
+            />
+          </label>
+          {error && (
+            <p className="form-error" role="alert">
+              {error}
+            </p>
+          )}
+          <button type="submit" className="btn-discovery" disabled={pending}>
+            {pending
+              ? 'Abriendo el laboratorio…'
+              : mode === 'login'
+                ? 'Entrar a explorar'
+                : 'Comenzar a explorar'}
+          </button>
+        </form>
+        <p className="auth-switch">
+          {mode === 'login' ? (
+            <>
+              ¿Primera vez aquí? <Link to="/register">Crear perfil</Link>
+            </>
+          ) : (
+            <>
+              ¿Ya tienes un espacio? <Link to="/login">Entrar</Link>
+            </>
+          )}
+        </p>
+      </div>
     </main>
   )
 }

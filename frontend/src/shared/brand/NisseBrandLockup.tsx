@@ -1,5 +1,5 @@
-import type { HTMLAttributes } from "react";
-import { NisseMark, type NisseMarkVariant } from "./NisseMark";
+import type { CSSProperties, HTMLAttributes } from "react";
+import { brandAssetPaths, type NisseMarkVariant } from "./NisseMark";
 
 export type NisseBrandLockupSize = "entry" | "compact";
 
@@ -10,14 +10,16 @@ export type NisseBrandLockupProps = HTMLAttributes<HTMLDivElement> & {
 
 const SIZE_CONFIG: Record<
   NisseBrandLockupSize,
-  { variant: NisseMarkVariant; px: number; markClass: string }
+  { variant: NisseMarkVariant; markClass: string }
 > = {
-  entry: { variant: "official", px: 48, markClass: "nisse-mark--md" },
-  compact: { variant: "favicon", px: 24, markClass: "nisse-mark--sm" },
+  // Clean SVGs as mask sources (no baked neon/glow) → tinted with discovery
+  entry: { variant: "official-clean", markClass: "nisse-mark--md" },
+  compact: { variant: "favicon-clean", markClass: "nisse-mark--sm" },
 };
 
 /**
  * Product identity lockup: brand mark + wordmark.
+ * In-app mark uses discovery yellow (same accent as active UI icons).
  * Mark is decorative when the wordmark is visible.
  */
 export function NisseBrandLockup({
@@ -26,6 +28,11 @@ export function NisseBrandLockup({
   ...props
 }: NisseBrandLockupProps) {
   const config = SIZE_CONFIG[size];
+  const maskUrl = `url(${brandAssetPaths[config.variant]})`;
+  const markStyle = {
+    ["--nisse-mark-mask" as string]: maskUrl,
+  } as CSSProperties;
+
   return (
     <div
       className={[
@@ -37,12 +44,11 @@ export function NisseBrandLockup({
         .join(" ")}
       {...props}
     >
-      <NisseMark
-        variant={config.variant}
-        width={config.px}
-        height={config.px}
-        alt=""
-        className={config.markClass}
+      <span
+        className={["nisse-mark", "nisse-mark--discovery", config.markClass]
+          .filter(Boolean)
+          .join(" ")}
+        style={markStyle}
         aria-hidden
       />
       <span className="nisse-brand-lockup__wordmark">NISSE</span>

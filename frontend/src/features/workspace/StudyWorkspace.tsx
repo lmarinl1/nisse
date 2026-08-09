@@ -1,10 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 import { Link, Outlet, useParams } from 'react-router-dom'
 import { getStudy, type Study } from '../../shared/api/client'
-import { NisseBrandLockup } from '../../shared/brand'
+import { brandAssetPaths } from '../../shared/brand'
 import { ArrowLeftIcon } from '../../shared/icons'
 import { ResearchSessionNav } from './ResearchSessionNav'
 import './workspace.css'
+
+const identityMarkStyle = {
+  ['--nisse-mark-mask' as string]: `url(${brandAssetPaths['official-clean']})`,
+} as CSSProperties
 
 export function StudyWorkspace() {
   const { studyId } = useParams<{ studyId: string }>()
@@ -27,7 +31,7 @@ export function StudyWorkspace() {
           setError(
             err instanceof Error
               ? err.message
-              : 'No pudimos abrir este Workspace. Vuelve a la biblioteca e inténtalo de nuevo.',
+              : 'No pudimos abrir este Workspace. Vuelve al campo e inténtalo de nuevo.',
           )
         }
       })
@@ -44,7 +48,7 @@ export function StudyWorkspace() {
         </p>
         <Link to="/" className="workspace__back">
           <ArrowLeftIcon size="sm" />
-          Volver a la biblioteca
+          Volver al campo
         </Link>
       </main>
     )
@@ -61,21 +65,39 @@ export function StudyWorkspace() {
   return (
     <div className="workspace">
       <aside className="workspace__rail" aria-label="Contexto de investigación">
-        <NisseBrandLockup size="compact" className="workspace__brand" />
-        <Link to="/" className="workspace__back">
-          <ArrowLeftIcon size="sm" />
-          Biblioteca
-        </Link>
-        <p className="eyebrow">Objeto de Estudio</p>
-        <h1>{study.name}</h1>
-        {study.description ? (
-          <p className="workspace__desc">{study.description}</p>
-        ) : (
-          <p className="muted">
-            Sin contexto escrito todavía. Puedes refinarlo desde la biblioteca.
-          </p>
-        )}
-        <ResearchSessionNav studyId={studyId} />
+        <div className="workspace__rail-panel workspace__rail-panel--identity">
+          <div className="workspace__identity">
+            <span
+              className="nisse-mark nisse-mark--discovery workspace__identity-mark"
+              style={identityMarkStyle}
+              aria-hidden
+            />
+            <span className="workspace__identity-wordmark">NISSE</span>
+            <p className="workspace__motto">
+              El futuro no se predice: se anticipa y se diseña.
+            </p>
+          </div>
+        </div>
+
+        <div className="workspace__rail-panel workspace__rail-panel--sessions">
+          <ResearchSessionNav studyId={studyId} />
+        </div>
+
+        <div className="workspace__rail-panel workspace__rail-panel--study workspace__rail-foot">
+          <p className="eyebrow">Objeto de Estudio</p>
+          <h1>{study.name}</h1>
+          {study.description ? (
+            <p className="workspace__desc">{study.description}</p>
+          ) : (
+            <p className="muted">
+              Sin contexto escrito todavía. Puedes refinarlo desde el campo.
+            </p>
+          )}
+          <Link to="/" className="workspace__back">
+            <ArrowLeftIcon size="sm" />
+            Campo
+          </Link>
+        </div>
       </aside>
 
       <main className="workspace__stage">
@@ -83,11 +105,13 @@ export function StudyWorkspace() {
       </main>
 
       <aside className="workspace__companion" aria-label="Companion">
-        <p className="eyebrow">Companion</p>
-        <p className="workspace__companion-copy">
-          Acompañará la exploración cuando actives agentes. No es un chat: es un
-          investigador que propone relaciones sobre este Workspace.
-        </p>
+        <div className="workspace__companion-panel">
+          <p className="eyebrow">Companion</p>
+          <p className="workspace__companion-copy">
+            Acompañará la exploración cuando actives agentes. No es un chat: es
+            un investigador que propone relaciones sobre este Workspace.
+          </p>
+        </div>
       </aside>
     </div>
   )

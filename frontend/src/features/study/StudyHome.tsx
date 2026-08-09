@@ -37,7 +37,7 @@ export function StudyHome() {
           setError(
             err instanceof Error
               ? err.message
-              : 'No pudimos abrir la biblioteca. Revisa la conexión e inténtalo de nuevo.',
+              : 'No pudimos abrir el campo. Revisa la conexión e inténtalo de nuevo.',
           )
         }
       })
@@ -72,7 +72,7 @@ export function StudyHome() {
   return (
     <main className="study-home">
       <div className="study-home__atmosphere" aria-hidden="true">
-        <ResearchNetworkAtmosphere density="sparse" />
+        <ResearchNetworkAtmosphere density="sparse" layout="study" />
         <div className="study-home__vignette" />
       </div>
 

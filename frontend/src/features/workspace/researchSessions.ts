@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react'
 import {
+  CandidatesIcon,
   CheckIcon,
   DecisionIcon,
   DocumentIcon,
@@ -17,6 +18,7 @@ export type ResearchSessionId =
   | 'evolution-forces'
   | 'critical-axes'
   | 'scenarios'
+  | 'narratives'
   | 'validation'
   | 'evaluation'
   | 'monitoring'
@@ -34,7 +36,7 @@ export const DEFAULT_RESEARCH_SESSION: ResearchSessionId = 'case-framework'
 export const RESEARCH_SESSIONS: readonly ResearchSession[] = [
   {
     id: 'case-framework',
-    label: 'Marco del caso de estudio',
+    label: 'Marco del objeto de estudio',
     Icon: DocumentIcon,
   },
   {
@@ -56,6 +58,11 @@ export const RESEARCH_SESSIONS: readonly ResearchSession[] = [
     id: 'scenarios',
     label: 'Escenarios',
     Icon: GraphIcon,
+  },
+  {
+    id: 'narratives',
+    label: 'Narrativas',
+    Icon: CandidatesIcon,
   },
   {
     id: 'validation',

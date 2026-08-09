@@ -36,8 +36,9 @@ const VARIANT_SRC: Record<NisseMarkVariant, string> = {
 };
 
 /**
- * Brand mark (telescopio). Prefer `official` for identity surfaces;
- * `favicon` for compact chrome (sin estrellas).
+ * Brand mark (telescopio). Prefer `NisseBrandLockup` for in-app identity
+ * (discovery tint). Use fixed neon variants (`official` / `favicon`) for kit
+ * or marketing; `favicon` for compact chrome when not using the lockup.
  */
 export function NisseMark({
   variant = "official",

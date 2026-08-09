@@ -16,7 +16,6 @@ export function ResearchSessionNav({ studyId }: ResearchSessionNavProps) {
       className="research-session-nav"
       aria-label="Sesiones de investigación"
     >
-      <p className="research-session-nav__eyebrow">Proceso</p>
       <ul className="research-session-nav__list">
         {RESEARCH_SESSIONS.map(({ id, label, Icon }) => (
           <li key={id}>

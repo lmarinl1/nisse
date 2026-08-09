@@ -93,16 +93,25 @@ Nota: vía `<img>` no hereda `color` CSS; requiere SVG inline o máscara.
 
 | Rol | Hex | Token |
 |---|---|---|
-| Neon de marca (mark) | `#D7FF2F` | `--color-brand-neon` / `color.brand.neon` |
+| Neon de marca (kit / marketing) | `#D7FF2F` | `--color-brand-neon` / `color.brand.neon` |
+| Discovery (UI + lockup in-app) | `#E8C547` | `--color-discovery-primary` / `color.discovery.primary` |
 | Deep space (variantes dark) | `#05070A` | `--color-brand-deep-space` |
 | Texto primario (kit) | `#F5F7FA` | alinear con `--color-text-primary` |
 | Texto secundario (kit) | `#A4ADB8` | alinear con `--color-text-secondary` |
 | Border (kit) | `#29303A` | no sustituye tokens de borde semánticos |
 
-El acento de **descubrimiento en UI** (`--color-discovery-primary`) orienta
-atención en la interfaz; **no** reemplaza el neon del mark oficial.
+## Dualidad intencional
 
-No sustituir el neon del telescopio por azul/púrpura “AI genérico”.
+- **Kit / marketing / export:** el telescopio puede conservar neon (`#D7FF2F`) en
+  assets oficiales (`nisse-icon-official.svg`, etc.).
+- **Producto in-app (`NisseBrandLockup`):** el mark MUST tintarse con
+  `--color-discovery-primary`, el mismo amarillo que los iconos UI en estado
+  activo. No usar neon en auth, Campo, Workspace ni diagnostics lockups.
+
+El acento de descubrimiento orienta atención en la interfaz **y** alinea la
+identidad del laboratorio con los instrumentos activos.
+
+No sustituir discovery ni neon por azul/púrpura “AI genérico”.
 
 ------------------------------------------------------------------------
 
@@ -141,7 +150,7 @@ Nunca:
   oficial sin estrellas)
 - cambiar proporciones del telescopio
 - rotarlo o estirarlo
-- reemplazar el neon yellow por azul/púrpura genérico
+- reemplazar el amarillo de marca (neon de kit o discovery in-app) por azul/púrpura genérico
 - añadir gradientes al cuerpo del telescopio
 - convertirlo en objeto 3D
 - añadir motivos robot / AI
@@ -160,12 +169,10 @@ asistente AI genérico.
 
 # Reglas para Cursor / desarrollo
 
-1. Usar assets de `frontend/public/brand` y/o `NisseMark` desde `shared/brand`.
+1. Usar assets de `frontend/public/brand` y/o `NisseMark` / `NisseBrandLockup` desde `shared/brand`.
 2. No mezclar el brand mark con el catálogo de `shared/icons`.
-3. Preferir `official` en superficies de identidad; `favicon` en chrome
-   compacto.
-4. Preferir color fijo del mark sobre `currentColor` cuando importe la
-   fidelidad de marca.
+3. Preferir `NisseBrandLockup` en superficies de identidad in-app (mark tintado discovery).
+4. Preferir `official` / `favicon` (neon fijo) solo para kit, marketing o cuando se pida fidelidad de export; en chrome de producto usar discovery vía lockup.
 5. No redibujar ni “mejorar” la geometría; extender solo variantes documentadas.
 6. El wordmark tipográfico “NISSE” puede acompañar al mark; el mark no sustituye
    el naming en código (`NisseMark`, no `Logo1`).

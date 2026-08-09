@@ -87,8 +87,13 @@ Los colores `#D7FF2F` / `#F5F7FA` del prototipo de iconos **no** se hardcodean e
 En producto el color viene de tokens (`color` CSS / `currentColor`):
 
 - por defecto → `color.text.primary` / `color.text.secondary`
-- acento de intención → `color.discovery.primary` (amarillo del sistema)
+- acento de intención / seleccionado / activo → `color.discovery.primary` (amarillo del sistema)
 - estados → `color.warning`, `color.error`, `color.success`, `color.ai.*`
+
+El **brand mark** en lockups in-app (`NisseBrandLockup`) usa el mismo
+`color.discovery.primary` que los iconos activos, para que identidad e
+instrumentos compartan un solo acento. El neon de kit (`color.brand.neon`) no
+pinta iconos UI ni el lockup de producto. Ver `13-brand-mark.md`.
 
 ------------------------------------------------------------------------
 
@@ -211,7 +216,7 @@ Estados:
 - error → color.error
 
 No colorear iconos por decoración.
-No usar el lima del prototipo (`#D7FF2F`) como acento de producto.
+No usar el lima del kit de marca (`#D7FF2F` / brand neon) como acento de iconos UI; el acento activo es discovery.
 
 ------------------------------------------------------------------------
 

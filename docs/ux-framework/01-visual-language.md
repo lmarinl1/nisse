@@ -293,6 +293,8 @@ Normas completas, catálogo y mapeo a Objetos Cognitivos: `10-iconography.md`.
 
 El **logo / brand mark** (telescopio) es identidad de producto, no un icono UI:
 `13-brand-mark.md` · `frontend/public/brand` · `shared/brand`.
+En chrome in-app el lockup usa discovery yellow (mismo acento que iconos activos);
+el neon queda para kit/marketing.
 
 ------------------------------------------------------------------------
 

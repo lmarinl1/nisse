@@ -28,6 +28,23 @@
   height: 5.5rem;
 }
 
+/* In-app lockup tint: discovery yellow (not brand neon) */
+.nisse-mark--discovery {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+  margin: 0.1em;
+  background-color: var(--color-discovery-primary);
+  -webkit-mask-image: var(--nisse-mark-mask);
+  mask-image: var(--nisse-mark-mask);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
 .nisse-brand-lockup {
   display: inline-flex;
   align-items: center;
