@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, Outlet, useParams } from 'react-router-dom'
 import { getStudy, type Study } from '../../shared/api/client'
 import { NisseBrandLockup } from '../../shared/brand'
 import { ArrowLeftIcon } from '../../shared/icons'
-import { WorkspaceCanvas } from '../canvas/WorkspaceCanvas'
+import { ResearchSessionNav } from './ResearchSessionNav'
 import './workspace.css'
 
 export function StudyWorkspace() {
@@ -50,7 +50,7 @@ export function StudyWorkspace() {
     )
   }
 
-  if (!study) {
+  if (!study || !studyId) {
     return (
       <main className="workspace workspace--message">
         <p className="loading-narrative">Abriendo el espacio de investigación…</p>
@@ -75,10 +75,11 @@ export function StudyWorkspace() {
             Sin contexto escrito todavía. Puedes refinarlo desde la biblioteca.
           </p>
         )}
+        <ResearchSessionNav studyId={studyId} />
       </aside>
 
       <main className="workspace__stage">
-        <WorkspaceCanvas />
+        <Outlet />
       </main>
 
       <aside className="workspace__companion" aria-label="Companion">
