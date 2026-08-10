@@ -13,10 +13,28 @@ export type HealthResponse = {
 export type Profile = {
   id: string
   username: string
+  email: string
+  first_name: string
+  last_name: string
+  role_title: string
+  country_code: string
+  phone: string
   display_name: string
   created_at: string
   updated_at: string
 }
+
+export type ProfileUpdateInput = {
+  username: string
+  email: string
+  first_name: string
+  last_name: string
+  role_title: string
+  country_code: string
+  phone: string
+}
+
+export type ApiFieldErrors = Record<string, string[]>
 
 export type AuthPayload = {
   token: string
@@ -126,6 +144,63 @@ export async function fetchProfileMe(): Promise<Profile> {
   return apiFetch<Profile>('/profile/me/')
 }
 
+export class ProfileUpdateError extends Error {
+  fieldErrors: ApiFieldErrors
+
+  constructor(message: string, fieldErrors: ApiFieldErrors) {
+    super(message)
+    this.name = 'ProfileUpdateError'
+    this.fieldErrors = fieldErrors
+  }
+}
+
+export async function updateProfileMe(
+  input: ProfileUpdateInput,
+): Promise<Profile> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = getToken()
+  if (token) {
+    headers.set('Authorization', `Token ${token}`)
+  }
+
+  const response = await fetch(`${API_BASE_URL}/profile/me/`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify(input),
+  })
+
+  const text = await response.text()
+  const data = text ? (JSON.parse(text) as unknown) : null
+
+  if (!response.ok) {
+    if (
+      response.status === 400 &&
+      data &&
+      typeof data === 'object' &&
+      !Array.isArray(data)
+    ) {
+      const fieldErrors: ApiFieldErrors = {}
+      for (const [key, value] of Object.entries(
+        data as Record<string, unknown>,
+      )) {
+        if (Array.isArray(value)) {
+          fieldErrors[key] = value.map(String)
+        } else if (typeof value === 'string') {
+          fieldErrors[key] = [value]
+        }
+      }
+      throw new ProfileUpdateError('No pudimos guardar el perfil.', fieldErrors)
+    }
+    const detail =
+      data && typeof data === 'object' && 'detail' in data
+        ? String((data as { detail: unknown }).detail)
+        : `Request failed (${response.status})`
+    throw new Error(detail)
+  }
+
+  return data as Profile
+}
+
 export async function listStudies(): Promise<Study[]> {
   return apiFetch<Study[]>('/studies/')
 }
@@ -200,6 +275,243 @@ export async function patchCaseFrameworkSection(
     {
       method: 'PATCH',
       body: JSON.stringify(patch),
+    },
+  )
+}
+
+export type TimelineClassification = 'real' | 'fictional'
+export type TimelineStatus = 'active' | 'archived'
+export type RecallClassification =
+  | 'verified'
+  | 'approximate'
+  | 'hypothetical'
+  | 'fiction'
+
+export type Timeline = {
+  id: string
+  study_id: string
+  name: string
+  description: string
+  classification: TimelineClassification
+  retrospective_year: number
+  status: TimelineStatus
+  is_default: boolean
+  recall_count: number
+  created_at: string
+  updated_at: string
+}
+
+export type TimelineInput = {
+  name: string
+  description?: string
+  classification: TimelineClassification
+  retrospective_year: number
+}
+
+export type Moment = {
+  id: string
+  title: string
+  content_markdown: string
+  type: string
+  reference: string
+  created_at: string
+  updated_at: string
+}
+
+export type MomentInput = {
+  title: string
+  content_markdown?: string
+  type?: string
+  reference?: string
+}
+
+export type Recall = {
+  id: string
+  study_id: string
+  home_timeline_id: string
+  timeline_ids: string[]
+  title: string
+  location: string
+  description_markdown: string
+  classification: RecallClassification
+  temporal_year: number
+  temporal_month: number | null
+  temporal_day: number | null
+  sort_key: number
+  is_collapse: boolean
+  moments: Moment[]
+  created_at: string
+  updated_at: string
+}
+
+export type RecallInput = {
+  title: string
+  location?: string
+  description_markdown: string
+  classification: RecallClassification
+  temporal_year: number
+  temporal_month?: number | null
+  temporal_day?: number | null
+}
+
+export async function listTimelines(
+  studyId: string,
+  status: 'active' | 'archived' | 'all' = 'all',
+): Promise<Timeline[]> {
+  const query = status === 'all' ? '' : `?status=${status}`
+  return apiFetch<Timeline[]>(`/studies/${studyId}/timelines/${query}`)
+}
+
+export async function createTimeline(
+  studyId: string,
+  input: TimelineInput,
+): Promise<Timeline> {
+  return apiFetch<Timeline>(`/studies/${studyId}/timelines/`, {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+}
+
+export async function getTimeline(
+  studyId: string,
+  timelineId: string,
+): Promise<Timeline> {
+  return apiFetch<Timeline>(`/studies/${studyId}/timelines/${timelineId}/`)
+}
+
+export async function updateTimeline(
+  studyId: string,
+  timelineId: string,
+  input: TimelineInput,
+): Promise<Timeline> {
+  return apiFetch<Timeline>(`/studies/${studyId}/timelines/${timelineId}/`, {
+    method: 'PATCH',
+    body: JSON.stringify(input),
+  })
+}
+
+export async function archiveTimeline(
+  studyId: string,
+  timelineId: string,
+): Promise<Timeline> {
+  return apiFetch<Timeline>(
+    `/studies/${studyId}/timelines/${timelineId}/archive/`,
+    { method: 'POST' },
+  )
+}
+
+export async function restoreTimeline(
+  studyId: string,
+  timelineId: string,
+): Promise<Timeline> {
+  return apiFetch<Timeline>(
+    `/studies/${studyId}/timelines/${timelineId}/restore/`,
+    { method: 'POST' },
+  )
+}
+
+export async function deleteTimeline(
+  studyId: string,
+  timelineId: string,
+): Promise<void> {
+  return apiFetch<void>(`/studies/${studyId}/timelines/${timelineId}/`, {
+    method: 'DELETE',
+  })
+}
+
+export async function listRecalls(
+  studyId: string,
+  timelineId: string,
+): Promise<Recall[]> {
+  return apiFetch<Recall[]>(
+    `/studies/${studyId}/timelines/${timelineId}/recalls/`,
+  )
+}
+
+export async function createRecall(
+  studyId: string,
+  timelineId: string,
+  input: RecallInput,
+): Promise<Recall> {
+  return apiFetch<Recall>(
+    `/studies/${studyId}/timelines/${timelineId}/recalls/`,
+    {
+      method: 'POST',
+      body: JSON.stringify(input),
+    },
+  )
+}
+
+export async function updateRecall(
+  studyId: string,
+  recallId: string,
+  input: RecallInput,
+): Promise<Recall> {
+  return apiFetch<Recall>(`/studies/${studyId}/recalls/${recallId}/`, {
+    method: 'PATCH',
+    body: JSON.stringify(input),
+  })
+}
+
+export async function deleteRecall(
+  studyId: string,
+  recallId: string,
+): Promise<void> {
+  return apiFetch<void>(`/studies/${studyId}/recalls/${recallId}/`, {
+    method: 'DELETE',
+  })
+}
+
+export async function createMoment(
+  studyId: string,
+  recallId: string,
+  input: MomentInput,
+): Promise<Moment> {
+  return apiFetch<Moment>(
+    `/studies/${studyId}/recalls/${recallId}/moments/`,
+    {
+      method: 'POST',
+      body: JSON.stringify(input),
+    },
+  )
+}
+
+export async function updateMoment(
+  studyId: string,
+  recallId: string,
+  momentId: string,
+  input: MomentInput,
+): Promise<Moment> {
+  return apiFetch<Moment>(
+    `/studies/${studyId}/recalls/${recallId}/moments/${momentId}/`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify(input),
+    },
+  )
+}
+
+export async function deleteMoment(
+  studyId: string,
+  recallId: string,
+  momentId: string,
+): Promise<void> {
+  return apiFetch<void>(
+    `/studies/${studyId}/recalls/${recallId}/moments/${momentId}/`,
+    { method: 'DELETE' },
+  )
+}
+
+export async function createCollapse(
+  studyId: string,
+  recallId: string,
+  timelineIds: string[],
+): Promise<Recall> {
+  return apiFetch<Recall>(
+    `/studies/${studyId}/recalls/${recallId}/collapses/`,
+    {
+      method: 'POST',
+      body: JSON.stringify({ timeline_ids: timelineIds }),
     },
   )
 }

@@ -59,7 +59,100 @@ class IdentityAndStudyApiTests(APITestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTrue(Profile.objects.filter(user=lonely).exists())
-        self.assertEqual(response.json()["username"], "lonely")
+        body = response.json()
+        self.assertEqual(body["username"], "lonely")
+        self.assertIn("first_name", body)
+        self.assertIn("email", body)
+        self.assertIn("role_title", body)
+        self.assertIn("country_code", body)
+        self.assertIn("phone", body)
+
+    def test_patch_profile_me_updates_own_fields(self):
+        self._auth(self.token)
+        response = self.client.patch(
+            "/api/profile/me/",
+            {
+                "first_name": "Miguel",
+                "last_name": "García López",
+                "role_title": "Diseñador de Futuros",
+                "country_code": "+57",
+                "phone": "3001234567",
+                "email": "miguel@example.com",
+                "username": "miguel",
+                "id": str(self.other.profile.pk),
+                "user_id": str(self.other.pk),
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        body = response.json()
+        self.assertEqual(body["first_name"], "Miguel")
+        self.assertEqual(body["last_name"], "García López")
+        self.assertEqual(body["role_title"], "Diseñador de Futuros")
+        self.assertEqual(body["country_code"], "+57")
+        self.assertEqual(body["phone"], "3001234567")
+        self.assertEqual(body["email"], "miguel@example.com")
+        self.assertEqual(body["username"], "miguel")
+        self.assertEqual(body["display_name"], "Miguel")
+
+        self.user.refresh_from_db()
+        self.other.refresh_from_db()
+        self.assertEqual(self.user.username, "miguel")
+        self.assertEqual(self.user.email, "miguel@example.com")
+        self.assertEqual(self.other.username, "other")
+        self.assertNotEqual(self.other.email, "miguel@example.com")
+
+        own = Profile.objects.get(user=self.user)
+        foreign = Profile.objects.get(user=self.other)
+        self.assertEqual(own.first_name, "Miguel")
+        self.assertEqual(foreign.first_name, "")
+
+    def test_patch_profile_me_rejects_invalid_payload(self):
+        self._auth(self.token)
+        response = self.client.patch(
+            "/api/profile/me/",
+            {
+                "first_name": "",
+                "last_name": "García",
+                "role_title": "Diseñador de Futuros",
+                "country_code": "57",
+                "phone": "12",
+                "email": "not-an-email",
+                "username": "designer",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 400)
+        errors = response.json()
+        self.assertIn("first_name", errors)
+        self.assertIn("country_code", errors)
+        self.assertIn("phone", errors)
+        self.assertIn("email", errors)
+
+    def test_patch_profile_me_rejects_duplicate_username(self):
+        self._auth(self.token)
+        response = self.client.patch(
+            "/api/profile/me/",
+            {
+                "first_name": "Ana",
+                "last_name": "Pérez",
+                "role_title": "Diseñadora de Futuros",
+                "country_code": "+52",
+                "phone": "5512345678",
+                "email": "ana@example.com",
+                "username": "other",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("username", response.json())
+
+    def test_logout_then_profile_returns_401(self):
+        self._auth(self.token)
+        logout = self.client.post("/api/auth/logout/")
+        self.assertEqual(logout.status_code, 204)
+        response = self.client.get("/api/profile/me/")
+        self.assertEqual(response.status_code, 401)
 
     def test_register_creates_user_profile_and_token(self):
         response = self.client.post(
@@ -248,3 +341,182 @@ class CaseFrameworkApiTests(APITestCase):
             if s["section_type"] == "conceptual-evolution"
         )
         self.assertEqual(section["fields"].get("initial_intuition", ""), "")
+
+
+class TimelineApiTests(APITestCase):
+    def setUp(self):
+        self.password = "research-lab-pass-1"
+        self.user = User.objects.create_user(
+            username="tl-owner",
+            password=self.password,
+        )
+        ensure_profile(self.user)
+        self.token = Token.objects.create(user=self.user)
+        self.other = User.objects.create_user(
+            username="tl-other",
+            password=self.password,
+        )
+        ensure_profile(self.other)
+        self.other_token = Token.objects.create(user=self.other)
+
+    def _auth(self, token: Token):
+        self.client.credentials(HTTP_AUTHORIZATION=f"Token {token.key}")
+
+    def test_create_study_materializes_principal_timeline(self):
+        self._auth(self.token)
+        create = self.client.post(
+            "/api/studies/",
+            {"name": "Interacción Humanos-Agentes"},
+            format="json",
+        )
+        self.assertEqual(create.status_code, 201)
+        study_id = create.json()["id"]
+        listing = self.client.get(f"/api/studies/{study_id}/timelines/")
+        self.assertEqual(listing.status_code, 200)
+        body = listing.json()
+        self.assertEqual(len(body), 1)
+        self.assertTrue(body[0]["is_default"])
+        self.assertEqual(body[0]["name"], "Interacción Humanos-Agentes")
+        self.assertEqual(body[0]["status"], "active")
+
+    def test_foreign_timelines_denied(self):
+        self._auth(self.other_token)
+        create = self.client.post(
+            "/api/studies/",
+            {"name": "Ajeno"},
+            format="json",
+        )
+        study_id = create.json()["id"]
+        self._auth(self.token)
+        response = self.client.get(f"/api/studies/{study_id}/timelines/")
+        self.assertEqual(response.status_code, 404)
+
+    def test_archive_restore_and_hard_delete_guards(self):
+        self._auth(self.token)
+        study_id = self.client.post(
+            "/api/studies/",
+            {"name": "Caso"},
+            format="json",
+        ).json()["id"]
+        created = self.client.post(
+            f"/api/studies/{study_id}/timelines/",
+            {
+                "name": "Extra",
+                "classification": "fictional",
+                "retrospective_year": 2030,
+            },
+            format="json",
+        )
+        self.assertEqual(created.status_code, 201)
+        timeline_id = created.json()["id"]
+        principal_id = self.client.get(
+            f"/api/studies/{study_id}/timelines/",
+        ).json()[0]["id"]
+
+        # Active cannot hard delete
+        bad = self.client.delete(
+            f"/api/studies/{study_id}/timelines/{timeline_id}/",
+        )
+        self.assertEqual(bad.status_code, 400)
+
+        archive = self.client.post(
+            f"/api/studies/{study_id}/timelines/{timeline_id}/archive/",
+        )
+        self.assertEqual(archive.status_code, 200)
+        self.assertEqual(archive.json()["status"], "archived")
+
+        restore = self.client.post(
+            f"/api/studies/{study_id}/timelines/{timeline_id}/restore/",
+        )
+        self.assertEqual(restore.status_code, 200)
+        self.assertEqual(restore.json()["status"], "active")
+
+        self.client.post(
+            f"/api/studies/{study_id}/timelines/{timeline_id}/archive/",
+        )
+        deleted = self.client.delete(
+            f"/api/studies/{study_id}/timelines/{timeline_id}/",
+        )
+        self.assertEqual(deleted.status_code, 204)
+
+        # Principal never hard-deletes
+        self.client.post(
+            f"/api/studies/{study_id}/timelines/{principal_id}/archive/",
+        )
+        principal_delete = self.client.delete(
+            f"/api/studies/{study_id}/timelines/{principal_id}/",
+        )
+        self.assertEqual(principal_delete.status_code, 400)
+
+    def test_bce_ordering_and_collapse_shared_identity(self):
+        self._auth(self.token)
+        study_id = self.client.post(
+            "/api/studies/",
+            {"name": "Temporal"},
+            format="json",
+        ).json()["id"]
+        timelines = self.client.get(f"/api/studies/{study_id}/timelines/").json()
+        a_id = timelines[0]["id"]
+        b = self.client.post(
+            f"/api/studies/{study_id}/timelines/",
+            {
+                "name": "Línea B",
+                "classification": "real",
+                "retrospective_year": -500,
+            },
+            format="json",
+        ).json()
+        b_id = b["id"]
+
+        for year, title in [(-500, "500 a.C."), (-44, "44 a.C."), (1492, "1492")]:
+            resp = self.client.post(
+                f"/api/studies/{study_id}/timelines/{a_id}/recalls/",
+                {
+                    "title": title,
+                    "description_markdown": f"Evento {title}",
+                    "classification": "verified",
+                    "temporal_year": year,
+                },
+                format="json",
+            )
+            self.assertEqual(resp.status_code, 201)
+
+        ordered = self.client.get(
+            f"/api/studies/{study_id}/timelines/{a_id}/recalls/",
+        ).json()
+        self.assertEqual(
+            [r["title"] for r in ordered],
+            ["500 a.C.", "44 a.C.", "1492"],
+        )
+
+        recall_id = ordered[0]["id"]
+        collapse = self.client.post(
+            f"/api/studies/{study_id}/recalls/{recall_id}/collapses/",
+            {"timeline_ids": [a_id, b_id]},
+            format="json",
+        )
+        self.assertEqual(collapse.status_code, 201)
+        self.assertTrue(collapse.json()["is_collapse"])
+        self.assertEqual(set(collapse.json()["timeline_ids"]), {a_id, b_id})
+
+        on_b = self.client.get(
+            f"/api/studies/{study_id}/timelines/{b_id}/recalls/",
+        ).json()
+        self.assertEqual(len(on_b), 1)
+        self.assertEqual(on_b[0]["id"], recall_id)
+
+        # Archived timeline rejects new recalls
+        self.client.post(
+            f"/api/studies/{study_id}/timelines/{b_id}/archive/",
+        )
+        blocked = self.client.post(
+            f"/api/studies/{study_id}/timelines/{b_id}/recalls/",
+            {
+                "title": "No",
+                "description_markdown": "x",
+                "classification": "fiction",
+                "temporal_year": 2100,
+            },
+            format="json",
+        )
+        self.assertEqual(blocked.status_code, 400)

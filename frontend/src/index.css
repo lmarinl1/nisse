@@ -126,6 +126,13 @@ textarea {
     transform var(--motion-hover) var(--ease-out);
 }
 
+.btn-discovery--compact {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
 .btn-discovery:hover:not(:disabled) {
   filter: brightness(1.05);
 }

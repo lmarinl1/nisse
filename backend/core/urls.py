@@ -25,4 +25,49 @@ urlpatterns = [
         views.CaseFrameworkSectionPatchView.as_view(),
         name="study-case-framework-section",
     ),
+    path(
+        "studies/<str:pk>/timelines/",
+        views.TimelineListCreateView.as_view(),
+        name="study-timeline-list",
+    ),
+    path(
+        "studies/<str:pk>/timelines/<str:timeline_id>/",
+        views.TimelineDetailView.as_view(),
+        name="study-timeline-detail",
+    ),
+    path(
+        "studies/<str:pk>/timelines/<str:timeline_id>/archive/",
+        views.TimelineArchiveView.as_view(),
+        name="study-timeline-archive",
+    ),
+    path(
+        "studies/<str:pk>/timelines/<str:timeline_id>/restore/",
+        views.TimelineRestoreView.as_view(),
+        name="study-timeline-restore",
+    ),
+    path(
+        "studies/<str:pk>/timelines/<str:timeline_id>/recalls/",
+        views.TimelineRecallListCreateView.as_view(),
+        name="study-timeline-recalls",
+    ),
+    path(
+        "studies/<str:pk>/recalls/<str:recall_id>/",
+        views.RecallDetailView.as_view(),
+        name="study-recall-detail",
+    ),
+    path(
+        "studies/<str:pk>/recalls/<str:recall_id>/moments/",
+        views.RecallMomentListCreateView.as_view(),
+        name="study-recall-moments",
+    ),
+    path(
+        "studies/<str:pk>/recalls/<str:recall_id>/moments/<str:moment_id>/",
+        views.MomentDetailView.as_view(),
+        name="study-moment-detail",
+    ),
+    path(
+        "studies/<str:pk>/recalls/<str:recall_id>/collapses/",
+        views.RecallCollapseCreateView.as_view(),
+        name="study-recall-collapses",
+    ),
 ]

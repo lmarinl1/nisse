@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 import { NavLink, useLocation, useParams } from 'react-router-dom'
 import {
   getCaseFramework,
+  listTimelines,
   type CaseFrameworkProgressStatus,
+  type Timeline,
 } from '../../shared/api/client'
-import { ChevronDownIcon } from '../../shared/icons'
+import { CalendarIcon, ChevronDownIcon } from '../../shared/icons'
 import { CASE_FRAMEWORK_SECTIONS } from '../case-framework/caseFrameworkSections'
 import '../case-framework/case-framework.css'
 import {
@@ -12,6 +14,8 @@ import {
   caseFrameworkSectionPath,
   RESEARCH_SESSIONS,
   studySessionPath,
+  timelinePath,
+  timelinesPath,
   type ResearchSessionId,
 } from './researchSessions'
 
@@ -19,29 +23,51 @@ type ResearchSessionNavProps = {
   studyId: string
 }
 
+type ExpandedPrimary = 'case-framework' | 'timelines' | null
+
 export function ResearchSessionNav({ studyId }: ResearchSessionNavProps) {
   const location = useLocation()
-  const { session: activeSession, section: activeSection } = useParams<{
-    session?: string
-    section?: string
-  }>()
+  const { session: activeSession, section: activeSection, timelineId } =
+    useParams<{
+      session?: string
+      section?: string
+      timelineId?: string
+    }>()
   const underCaseFramework = location.pathname.includes(
     `/studies/${studyId}/case-framework`,
   )
-  const [manualExpand, setManualExpand] = useState(false)
-  const [forceCollapsed, setForceCollapsed] = useState(false)
+  const underTimelines = location.pathname.includes(
+    `/studies/${studyId}/timelines`,
+  )
+
+  const [manualExpand, setManualExpand] = useState<ExpandedPrimary>(null)
+  const [forceCollapsed, setForceCollapsed] = useState<ExpandedPrimary>(null)
   const [progress, setProgress] = useState<
     Partial<Record<string, CaseFrameworkProgressStatus>>
   >({})
+  const [activeTimelines, setActiveTimelines] = useState<Timeline[]>([])
 
-  const expanded = underCaseFramework ? !forceCollapsed : manualExpand
+  const caseExpanded =
+    underCaseFramework && forceCollapsed !== 'case-framework'
+      ? true
+      : manualExpand === 'case-framework'
+  const timelinesExpanded =
+    underTimelines && forceCollapsed !== 'timelines'
+      ? true
+      : manualExpand === 'timelines'
 
   useEffect(() => {
-    if (!underCaseFramework) {
-      setManualExpand(false)
-      setForceCollapsed(false)
+    if (!underCaseFramework && !underTimelines) {
+      setManualExpand(null)
+      setForceCollapsed(null)
+    } else if (underCaseFramework) {
+      setManualExpand(null)
+      setForceCollapsed((prev) => (prev === 'case-framework' ? prev : null))
+    } else if (underTimelines) {
+      setManualExpand(null)
+      setForceCollapsed((prev) => (prev === 'timelines' ? prev : null))
     }
-  }, [underCaseFramework])
+  }, [underCaseFramework, underTimelines])
 
   useEffect(() => {
     let cancelled = false
@@ -63,6 +89,48 @@ export function ResearchSessionNav({ studyId }: ResearchSessionNavProps) {
       cancelled = true
     }
   }, [studyId, location.pathname])
+
+  useEffect(() => {
+    let cancelled = false
+    listTimelines(studyId, 'active')
+      .then((data) => {
+        if (!cancelled) {
+          setActiveTimelines(
+            [...data].sort((a, b) => Number(b.is_default) - Number(a.is_default)),
+          )
+        }
+      })
+      .catch(() => {
+        /* accordion children optional until loaded */
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [studyId, location.pathname])
+
+  function currentLabel(): string {
+    if (timelineId) {
+      return (
+        activeTimelines.find((t) => t.id === timelineId)?.name ?? 'Línea de tiempo'
+      )
+    }
+    if (activeSection) {
+      return (
+        CASE_FRAMEWORK_SECTIONS.find((s) => s.id === activeSection)?.label ??
+        activeSection
+      )
+    }
+    if (underTimelines) {
+      return 'Líneas de tiempo'
+    }
+    if (underCaseFramework) {
+      return 'Marco del objeto de estudio'
+    }
+    return (
+      RESEARCH_SESSIONS.find((s) => s.id === (activeSession as ResearchSessionId))
+        ?.label ?? activeSession ?? ''
+    )
+  }
 
   return (
     <nav
@@ -99,10 +167,10 @@ export function ResearchSessionNav({ studyId }: ResearchSessionNavProps) {
                         .join(' ')
                     }
                     onClick={() => {
-                      setForceCollapsed(false)
-                      setManualExpand(true)
+                      setForceCollapsed(null)
+                      setManualExpand('case-framework')
                     }}
-                    aria-expanded={expanded}
+                    aria-expanded={caseExpanded}
                   >
                     <Icon size="nav" title={label} />
                     <span className="research-session-nav__label">{label}</span>
@@ -111,15 +179,15 @@ export function ResearchSessionNav({ studyId }: ResearchSessionNavProps) {
                     type="button"
                     className={[
                       'research-session-nav__chevron',
-                      expanded
+                      caseExpanded
                         ? 'research-session-nav__chevron--open'
                         : '',
                     ]
                       .filter(Boolean)
                       .join(' ')}
-                    aria-expanded={expanded}
+                    aria-expanded={caseExpanded}
                     aria-label={
-                      expanded
+                      caseExpanded
                         ? 'Ocultar etapas del Marco'
                         : 'Mostrar etapas del Marco'
                     }
@@ -127,16 +195,20 @@ export function ResearchSessionNav({ studyId }: ResearchSessionNavProps) {
                       event.preventDefault()
                       event.stopPropagation()
                       if (underCaseFramework) {
-                        setForceCollapsed((value) => !value)
+                        setForceCollapsed((value) =>
+                          value === 'case-framework' ? null : 'case-framework',
+                        )
                         return
                       }
-                      setManualExpand((value) => !value)
+                      setManualExpand((value) =>
+                        value === 'case-framework' ? null : 'case-framework',
+                      )
                     }}
                   >
                     <ChevronDownIcon size="sm" title="" aria-hidden />
                   </button>
                 </div>
-                {expanded ? (
+                {caseExpanded ? (
                   <ul className="research-session-nav__children">
                     {CASE_FRAMEWORK_SECTIONS.map((section) => {
                       const status = progress[section.id] ?? 'not_started'
@@ -172,6 +244,110 @@ export function ResearchSessionNav({ studyId }: ResearchSessionNavProps) {
             )
           }
 
+          if (id === 'timelines') {
+            return (
+              <li key={id} className="research-session-nav__item--accordion">
+                <div
+                  className={[
+                    'research-session-nav__primary',
+                    underTimelines
+                      ? 'research-session-nav__primary--active'
+                      : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                >
+                  <NavLink
+                    to={timelinesPath(studyId)}
+                    end
+                    className={({ isActive }) =>
+                      [
+                        'research-session-nav__link',
+                        'research-session-nav__link--primary',
+                        isActive || underTimelines
+                          ? 'research-session-nav__link--active'
+                          : '',
+                      ]
+                        .filter(Boolean)
+                        .join(' ')
+                    }
+                    onClick={() => {
+                      setForceCollapsed(null)
+                      setManualExpand('timelines')
+                    }}
+                    aria-expanded={timelinesExpanded}
+                  >
+                    <Icon size="nav" title={label} />
+                    <span className="research-session-nav__label">{label}</span>
+                  </NavLink>
+                  <button
+                    type="button"
+                    className={[
+                      'research-session-nav__chevron',
+                      timelinesExpanded
+                        ? 'research-session-nav__chevron--open'
+                        : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                    aria-expanded={timelinesExpanded}
+                    aria-label={
+                      timelinesExpanded
+                        ? 'Ocultar líneas de tiempo'
+                        : 'Mostrar líneas de tiempo'
+                    }
+                    onClick={(event) => {
+                      event.preventDefault()
+                      event.stopPropagation()
+                      if (underTimelines) {
+                        setForceCollapsed((value) =>
+                          value === 'timelines' ? null : 'timelines',
+                        )
+                        return
+                      }
+                      setManualExpand((value) =>
+                        value === 'timelines' ? null : 'timelines',
+                      )
+                    }}
+                  >
+                    <ChevronDownIcon size="sm" title="" aria-hidden />
+                  </button>
+                </div>
+                {timelinesExpanded ? (
+                  <ul className="research-session-nav__children">
+                    {activeTimelines.map((timeline) => (
+                      <li key={timeline.id}>
+                        <NavLink
+                          to={timelinePath(studyId, timeline.id)}
+                          className={({ isActive }) =>
+                            [
+                              'research-session-nav__child-link',
+                              isActive
+                                ? 'research-session-nav__child-link--active'
+                                : '',
+                            ]
+                              .filter(Boolean)
+                              .join(' ')
+                          }
+                        >
+                          <CalendarIcon size="sm" title={timeline.name} />
+                          <span>{timeline.name}</span>
+                          {timeline.is_default ? (
+                            <span
+                              className="research-session-nav__progress research-session-nav__progress--with_content"
+                              title="Principal"
+                              aria-hidden
+                            />
+                          ) : null}
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </li>
+            )
+          }
+
           return (
             <li key={id}>
               <NavLink
@@ -184,7 +360,10 @@ export function ResearchSessionNav({ studyId }: ResearchSessionNavProps) {
                     .filter(Boolean)
                     .join(' ')
                 }
-                onClick={() => setManualExpand(false)}
+                onClick={() => {
+                  setManualExpand(null)
+                  setForceCollapsed(null)
+                }}
               >
                 <Icon size="nav" title={label} />
                 <span className="research-session-nav__label">{label}</span>
@@ -193,17 +372,10 @@ export function ResearchSessionNav({ studyId }: ResearchSessionNavProps) {
           )
         })}
       </ul>
-      {underCaseFramework || activeSession ? (
+      {underCaseFramework || underTimelines || activeSession ? (
         <p className="research-session-nav__current" aria-live="polite">
           <span className="research-session-nav__current-label">Sesión</span>
-          {activeSection
-            ? (CASE_FRAMEWORK_SECTIONS.find((s) => s.id === activeSection)
-                ?.label ?? activeSection)
-            : underCaseFramework
-              ? 'Marco del objeto de estudio'
-              : (RESEARCH_SESSIONS.find(
-                  (s) => s.id === (activeSession as ResearchSessionId),
-                )?.label ?? activeSession)}
+          {currentLabel()}
         </p>
       ) : null}
     </nav>

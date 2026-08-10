@@ -1,12 +1,11 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import {
   getCaseFramework,
   type CaseFramework,
   type CaseFrameworkProgressStatus,
 } from '../../shared/api/client'
-import { brandAssetPaths } from '../../shared/brand'
-import { CloseIcon } from '../../shared/icons'
+import { ResearchDrawer, SessionCanvasHeader } from '../../shared/ui'
 import { caseFrameworkSectionPath } from '../workspace/researchSessions'
 import {
   CASE_FRAMEWORK_SECTIONS,
@@ -52,19 +51,6 @@ export function CaseFrameworkOverviewCanvas() {
     }
   }, [studyId])
 
-  useEffect(() => {
-    if (!drawer) {
-      return
-    }
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setDrawer(null)
-      }
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [drawer])
-
   if (error) {
     return (
       <div className="case-framework case-framework--message" role="alert">
@@ -93,52 +79,42 @@ export function CaseFrameworkOverviewCanvas() {
       role="region"
       aria-label="Marco del objeto de estudio"
     >
-      <header className="case-framework__hero-header case-framework__hero-header--overview">
-        <div className="case-framework__hero-brand">
-          <span
-            className="nisse-mark nisse-mark--discovery nisse-mark--sm case-framework__mark"
-            style={
-              {
-                ['--nisse-mark-mask' as string]: `url(${brandAssetPaths['official-clean']})`,
-              } as CSSProperties
-            }
-            aria-hidden
-          />
-          <div>
-            <p className="eyebrow">Lectura integrada</p>
-            <h2>Marco del objeto de estudio</h2>
-            <p className="case-framework__purpose">
-              La investigación no empieza con un objeto terminado. El objeto se
-              construye mientras pensamos, conversamos, tensionamos y
-              delimitamos.
-            </p>
-          </div>
-        </div>
-        <ol className="case-framework__tracking" aria-label="Progreso del Marco">
-          {CASE_FRAMEWORK_SECTIONS.map((config) => {
-            const section = framework.sections.find(
-              (item) => item.section_type === config.id,
-            )
-            const status: CaseFrameworkProgressStatus =
-              section?.status ?? 'not_started'
-            return (
-              <li key={config.id} className="case-framework__tracking-item">
-                <span
-                  className={`case-framework__tracking-dot case-framework__tracking-dot--${status}`}
-                  aria-hidden
-                />
-                <span className="case-framework__tracking-num">{config.number}</span>
-                <span className="case-framework__tracking-label">
-                  {config.label}
-                </span>
-                <span className="case-framework__tracking-status">
-                  {PROGRESS_STATUS_LABELS[status]}
-                </span>
-              </li>
-            )
-          })}
-        </ol>
-      </header>
+      <SessionCanvasHeader
+        eyebrow="Lectura integrada"
+        title="Marco del objeto de estudio"
+        purpose="La investigación no empieza con un objeto terminado. El objeto se construye mientras pensamos, conversamos, tensionamos y delimitamos."
+        aside={
+          <ol
+            className="case-framework__tracking"
+            aria-label="Progreso del Marco"
+          >
+            {CASE_FRAMEWORK_SECTIONS.map((config) => {
+              const section = framework.sections.find(
+                (item) => item.section_type === config.id,
+              )
+              const status: CaseFrameworkProgressStatus =
+                section?.status ?? 'not_started'
+              return (
+                <li key={config.id} className="case-framework__tracking-item">
+                  <span
+                    className={`case-framework__tracking-dot case-framework__tracking-dot--${status}`}
+                    aria-hidden
+                  />
+                  <span className="case-framework__tracking-num">
+                    {config.number}
+                  </span>
+                  <span className="case-framework__tracking-label">
+                    {config.label}
+                  </span>
+                  <span className="case-framework__tracking-status">
+                    {PROGRESS_STATUS_LABELS[status]}
+                  </span>
+                </li>
+              )
+            })}
+          </ol>
+        }
+      />
 
       <ol className="case-framework__spine">
         {CASE_FRAMEWORK_SECTIONS.map((config) => {
@@ -194,40 +170,20 @@ export function CaseFrameworkOverviewCanvas() {
         })}
       </ol>
 
-      {drawer ? (
-        <>
-          <button
-            type="button"
-            className="case-framework__drawer-backdrop"
-            aria-label="Cerrar vista completa"
-            onClick={() => setDrawer(null)}
+      <ResearchDrawer
+        open={drawer !== null}
+        title={drawer?.title ?? ''}
+        onClose={() => setDrawer(null)}
+      >
+        {drawer ? (
+          <div
+            className="case-framework__md"
+            dangerouslySetInnerHTML={{
+              __html: renderMarkdownToHtml(drawer.markdown),
+            }}
           />
-          <aside
-            className="case-framework__drawer"
-            role="dialog"
-            aria-modal="true"
-            aria-label={drawer.title}
-          >
-            <header className="case-framework__drawer-header">
-              <h3>{drawer.title}</h3>
-              <button
-                type="button"
-                className="case-framework__drawer-close"
-                onClick={() => setDrawer(null)}
-                aria-label="Cerrar"
-              >
-                <CloseIcon size="sm" title="Cerrar" />
-              </button>
-            </header>
-            <div
-              className="case-framework__drawer-body case-framework__md"
-              dangerouslySetInnerHTML={{
-                __html: renderMarkdownToHtml(drawer.markdown),
-              }}
-            />
-          </aside>
-        </>
-      ) : null}
+        ) : null}
+      </ResearchDrawer>
     </div>
   )
 }

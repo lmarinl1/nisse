@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { NisseBrandLockup } from '../../shared/brand'
 import { ResearchNetworkAtmosphere } from '../atmosphere/ResearchNetworkAtmosphere'
-import { useAuth } from '../identity/AuthContext'
+import { UserMenu } from '../identity/UserMenu'
 import {
   archiveStudy,
   createStudy,
@@ -17,7 +17,6 @@ import { StudyLibrary } from './StudyLibrary'
 import './study.css'
 
 export function StudyHome() {
-  const { profile, logout } = useAuth()
   const navigate = useNavigate()
   const [studies, setStudies] = useState<Study[] | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -79,18 +78,7 @@ export function StudyHome() {
       <div className="study-home__content">
         <header className="study-home__top">
           <NisseBrandLockup size="entry" className="study-home__brand" />
-          <div className="study-home__identity">
-            <span className="study-home__designer">
-              {profile?.display_name || profile?.username}
-            </span>
-            <button
-              type="button"
-              className="ghost"
-              onClick={() => void logout()}
-            >
-              Cerrar sesión
-            </button>
-          </div>
+          <UserMenu />
         </header>
 
         {error && (

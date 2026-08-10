@@ -13,15 +13,20 @@ import {
   logout as apiLogout,
   register as apiRegister,
   setToken,
+  updateProfileMe,
   type Profile,
+  type ProfileUpdateInput,
 } from '../../shared/api/client'
 
 type AuthState = {
   ready: boolean
   profile: Profile | null
+  profileError: string | null
   login: (username: string, password: string) => Promise<void>
   register: (username: string, password: string) => Promise<void>
   logout: () => Promise<void>
+  updateProfile: (input: ProfileUpdateInput) => Promise<Profile>
+  refreshProfile: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthState | null>(null)
@@ -29,6 +34,13 @@ const AuthContext = createContext<AuthState | null>(null)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false)
   const [profile, setProfile] = useState<Profile | null>(null)
+  const [profileError, setProfileError] = useState<string | null>(null)
+
+  const refreshProfile = useCallback(async () => {
+    const me = await fetchProfileMe()
+    setProfile(me)
+    setProfileError(null)
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -44,11 +56,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const me = await fetchProfileMe()
         if (!cancelled) {
           setProfile(me)
+          setProfileError(null)
         }
       } catch {
         setToken(null)
         if (!cancelled) {
           setProfile(null)
+          setProfileError(null)
         }
       } finally {
         if (!cancelled) {
@@ -66,20 +80,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (username: string, password: string) => {
     const payload = await apiLogin(username, password)
     setProfile(payload.profile)
+    setProfileError(null)
   }, [])
 
   const register = useCallback(async (username: string, password: string) => {
     const payload = await apiRegister(username, password)
     setProfile(payload.profile)
+    setProfileError(null)
   }, [])
 
   const logout = useCallback(async () => {
     await apiLogout()
     setProfile(null)
+    setProfileError(null)
+  }, [])
+
+  const updateProfile = useCallback(async (input: ProfileUpdateInput) => {
+    const updated = await updateProfileMe(input)
+    setProfile(updated)
+    setProfileError(null)
+    return updated
   }, [])
 
   return (
-    <AuthContext.Provider value={{ ready, profile, login, register, logout }}>
+    <AuthContext.Provider
+      value={{
+        ready,
+        profile,
+        profileError,
+        login,
+        register,
+        logout,
+        updateProfile,
+        refreshProfile,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

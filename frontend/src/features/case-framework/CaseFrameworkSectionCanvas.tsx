@@ -1,10 +1,10 @@
-import { useEffect, useEffectEvent, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useEffectEvent, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import {
   getCaseFramework,
   patchCaseFrameworkSection,
 } from '../../shared/api/client'
-import { brandAssetPaths } from '../../shared/brand'
+import { SessionCanvasHeader } from '../../shared/ui'
 import {
   getCaseFrameworkSection,
   type CaseFrameworkFieldConfig,
@@ -177,30 +177,18 @@ export function CaseFrameworkSectionCanvas({
       role="region"
       aria-label={config.label}
     >
-      <header className="case-framework__hero-header case-framework__hero-header--section">
-        {saveState === 'saved' ? (
-          <span className="case-framework__saved-flag">Guardado</span>
-        ) : null}
-        <div className="case-framework__hero-main">
-          <div className="case-framework__hero-brand">
-            <span
-              className="nisse-mark nisse-mark--discovery nisse-mark--sm case-framework__mark"
-              style={
-                {
-                  ['--nisse-mark-mask' as string]: `url(${brandAssetPaths['official-clean']})`,
-                } as CSSProperties
-              }
-              aria-hidden
-            />
-            <div>
-              <p className="eyebrow">
-                Marco del objeto de estudio · {config.number}
-              </p>
-              <h2>{config.label}</h2>
-              <p className="case-framework__purpose">{config.purpose}</p>
-            </div>
-          </div>
-          <div className="case-framework__hero-aside">
+      <SessionCanvasHeader
+        variant="section"
+        eyebrow={`Marco del objeto de estudio · ${config.number}`}
+        title={config.label}
+        purpose={config.purpose}
+        banner={
+          saveState === 'saved' ? (
+            <span className="case-framework__saved-flag">Guardado</span>
+          ) : null
+        }
+        aside={
+          <>
             <ul
               className="case-framework__status-triad"
               aria-label="Estado de la etapa"
@@ -239,9 +227,9 @@ export function CaseFrameworkSectionCanvas({
                 {saveState === 'saving' ? 'Guardando…' : 'Cambios pendientes…'}
               </span>
             ) : null}
-          </div>
-        </div>
-      </header>
+          </>
+        }
+      />
 
       <div className="case-framework__fields case-framework__fields--mosaic">
         {config.fields.map((field) => {

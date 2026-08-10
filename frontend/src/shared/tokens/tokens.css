@@ -94,6 +94,10 @@
   --z-drawer: 40;
   --z-drawer-backdrop: 39;
 
+  /* Research Drawer (~1/4 viewport) */
+  --drawer-width: clamp(18rem, 25vw, 28rem);
+  --drawer-title-color: var(--color-discovery-primary);
+
   /* App defaults */
   font-family: var(--font-family-primary);
   font-size: var(--font-size-body);

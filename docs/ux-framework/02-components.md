@@ -244,6 +244,20 @@ Ubicaciones:
 -   Right
 -   Bottom
 
+## Contrato oficial (implementación)
+
+En producto, el instrumento compartido es `ResearchDrawer`
+(`frontend/src/shared/ui/`):
+
+-   ancla derecha ≈ ¼ del viewport (`--drawer-width`)
+-   título en Discovery Yellow
+-   brand mark con estrellas en el header
+-   CTA Guardar/Crear/Actualizar con `btn-discovery`
+-   Select accesible: `ResearchSelect` (Radix + tokens NISSE)
+
+El header homologado de Canvas de subitem/sesión es `SessionCanvasHeader`
+(mark + eyebrow + título + propósito + aside).
+
 ------------------------------------------------------------------------
 
 # Tabs

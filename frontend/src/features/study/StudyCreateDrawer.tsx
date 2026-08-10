@@ -1,7 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import type { StudyInput } from '../../shared/api/client'
-import { CloseIcon } from '../../shared/icons'
-import './study-drawer.css'
+import { FormField, ResearchDrawer } from '../../shared/ui'
 
 type Props = {
   open: boolean
@@ -24,10 +23,6 @@ export function StudyCreateDrawer({
   const [description, setDescription] = useState(initial?.description ?? '')
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
-
-  if (!open) {
-    return null
-  }
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
@@ -52,63 +47,48 @@ export function StudyCreateDrawer({
   }
 
   return (
-    <aside className="study-drawer" aria-label={title}>
-      <button
-        type="button"
-        className="study-drawer__backdrop"
-        aria-label="Cerrar"
-        onClick={onClose}
-      />
-      <div className="study-drawer__panel">
-        <header>
-          <h2>{title}</h2>
-          <button
-            type="button"
-            className="ghost icon-action"
-            aria-label="Cerrar"
-            onClick={onClose}
-          >
-            <CloseIcon size="nav" />
-          </button>
-        </header>
-        <p className="hint">
-          El nombre puede ser la pregunta misma. La descripción es contexto
-          opcional para recordar el marco de la investigación.
-        </p>
-        <form onSubmit={handleSubmit}>
-          <label>
-            Pregunta / nombre
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="¿Qué señales están transformando…?"
-              required
-              autoFocus
-            />
-          </label>
-          <label>
-            Contexto <span className="optional">(opcional)</span>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={4}
-              placeholder="Horizonte, actores o incertidumbre que quieres tener a la vista"
-            />
-          </label>
-          {error && (
-            <p className="form-error" role="alert">
-              {error}
-            </p>
-          )}
-          <button
-            type="submit"
-            className="btn-discovery"
-            disabled={pending || !name.trim()}
-          >
-            {pending ? 'Preparando el Workspace…' : submitLabel}
-          </button>
-        </form>
-      </div>
-    </aside>
+    <ResearchDrawer
+      open={open}
+      title={title}
+      onClose={onClose}
+      hint="El nombre puede ser la pregunta misma. La descripción es contexto opcional para recordar el marco de la investigación."
+      footer={
+        <button
+          type="submit"
+          form="study-create-form"
+          className="btn-discovery btn-discovery--compact"
+          disabled={pending || !name.trim()}
+        >
+          {pending ? 'Preparando el Workspace…' : submitLabel}
+        </button>
+      }
+    >
+      <form id="study-create-form" onSubmit={handleSubmit}>
+        <FormField label="Pregunta / nombre" htmlFor="study-name">
+          <input
+            id="study-name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="¿Qué señales están transformando…?"
+            required
+            autoFocus
+          />
+        </FormField>
+        <FormField label="Contexto" htmlFor="study-desc" optional>
+          <textarea
+            id="study-desc"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={4}
+            placeholder="Horizonte, actores o incertidumbre que quieres tener a la vista"
+          />
+        </FormField>
+        {error ? (
+          <p className="form-error" role="alert">
+            {error}
+          </p>
+        ) : null}
+      </form>
+    </ResearchDrawer>
   )
 }

@@ -114,6 +114,10 @@ function SendIcon() {
   return (<><path d="m3 11 18-8-8 18-2-7z"/><path d="m11 14 10-11"/></>);
 }
 
+function SettingsIcon() {
+  return (<><circle cx="12" cy="12" r="3"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4"/></>);
+}
+
 function ShareIcon() {
   return (<><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="m8.3 10.8 7.4-4.6M8.3 13.2l7.4 4.6"/></>);
 }
@@ -128,6 +132,10 @@ function TimelineIcon() {
 
 function UserIcon() {
   return (<><circle cx="12" cy="7" r="3"/><path d="M5 21c.7-4 3-6 7-6s6.3 2 7 6"/></>);
+}
+
+function LogoutIcon() {
+  return (<><path d="M10 17H5V7h5"/><path d="M14 12H7"/><path d="m12 9 3 3-3 3"/><path d="M14 7h5v10h-5"/></>);
 }
 
 function WarningIcon() {
@@ -161,6 +169,7 @@ export const icons = {
   "home": HomeIcon,
   "legal": LegalIcon,
   "lock": LockIcon,
+  "logout": LogoutIcon,
   "minus": MinusIcon,
   "more": MoreIcon,
   "organization": OrganizationIcon,
@@ -168,6 +177,7 @@ export const icons = {
   "question": QuestionIcon,
   "security": SecurityIcon,
   "send": SendIcon,
+  "settings": SettingsIcon,
   "share": ShareIcon,
   "shield": ShieldIcon,
   "timeline": TimelineIcon,

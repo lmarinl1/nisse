@@ -94,6 +94,10 @@ export function LockIcon(props: NamedIconProps) {
   return <Icon name="lock" {...props} />;
 }
 
+export function LogoutIcon(props: NamedIconProps) {
+  return <Icon name="logout" {...props} />;
+}
+
 export function MinusIcon(props: NamedIconProps) {
   return <Icon name="minus" {...props} />;
 }
@@ -120,6 +124,10 @@ export function SecurityIcon(props: NamedIconProps) {
 
 export function SendIcon(props: NamedIconProps) {
   return <Icon name="send" {...props} />;
+}
+
+export function SettingsIcon(props: NamedIconProps) {
+  return <Icon name="settings" {...props} />;
 }
 
 export function ShareIcon(props: NamedIconProps) {

@@ -1,12 +1,12 @@
 import type { ComponentType } from 'react'
 import {
+  CalendarIcon,
   CandidatesIcon,
   CheckIcon,
   DecisionIcon,
   DocumentIcon,
   EyeIcon,
   FilterIcon,
-  FolderIcon,
   GraphIcon,
   TimelineIcon,
   type IconSize,
@@ -14,7 +14,7 @@ import {
 
 export type ResearchSessionId =
   | 'case-framework'
-  | 'prior-knowledge'
+  | 'timelines'
   | 'evolution-forces'
   | 'critical-axes'
   | 'scenarios'
@@ -40,9 +40,9 @@ export const RESEARCH_SESSIONS: readonly ResearchSession[] = [
     Icon: DocumentIcon,
   },
   {
-    id: 'prior-knowledge',
-    label: 'Conocimiento previo',
-    Icon: FolderIcon,
+    id: 'timelines',
+    label: 'Líneas de tiempo',
+    Icon: CalendarIcon,
   },
   {
     id: 'evolution-forces',
@@ -107,6 +107,14 @@ export function caseFrameworkSectionPath(
   section: string,
 ): string {
   return `/studies/${studyId}/case-framework/${section}`
+}
+
+export function timelinesPath(studyId: string): string {
+  return `/studies/${studyId}/timelines`
+}
+
+export function timelinePath(studyId: string, timelineId: string): string {
+  return `/studies/${studyId}/timelines/${timelineId}`
 }
 
 export function getResearchSession(

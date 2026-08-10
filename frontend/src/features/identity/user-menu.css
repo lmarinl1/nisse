@@ -1,0 +1,83 @@
+.user-menu {
+  position: relative;
+}
+
+.user-menu__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition:
+    border-color var(--motion-hover) var(--ease-out),
+    background var(--motion-hover) var(--ease-out);
+}
+
+.user-menu__trigger:hover,
+.user-menu__trigger[aria-expanded='true'] {
+  border-color: var(--color-border-default);
+  background: color-mix(in srgb, var(--color-workspace-panel) 70%, transparent);
+}
+
+.user-menu__trigger:focus-visible {
+  outline: 2px solid var(--color-discovery-primary);
+  outline-offset: 2px;
+}
+
+.user-menu__dropdown {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  z-index: 40;
+  min-width: 15rem;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-workspace-panel);
+  box-shadow: var(--shadow-elevated);
+  animation: nisse-emerge var(--motion-panel) var(--ease-out) both;
+}
+
+.user-menu__identity {
+  padding: var(--space-3) var(--space-3) var(--space-2);
+}
+
+.user-menu__divider {
+  height: 1px;
+  margin: var(--space-2) 0;
+  background: var(--color-border-subtle);
+}
+
+.user-menu__item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-caption);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--motion-hover) var(--ease-out),
+    color var(--motion-hover) var(--ease-out);
+}
+
+.user-menu__item:hover,
+.user-menu__item:focus-visible {
+  background: color-mix(in srgb, var(--color-discovery-primary) 12%, transparent);
+  color: var(--color-discovery-primary);
+  outline: none;
+}
+
+.user-menu__item--danger:hover,
+.user-menu__item--danger:focus-visible {
+  color: var(--color-text-primary);
+  background: color-mix(in srgb, var(--color-error) 14%, transparent);
+}

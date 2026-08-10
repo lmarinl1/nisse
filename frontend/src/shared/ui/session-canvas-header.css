@@ -1,0 +1,83 @@
+.session-canvas-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: none;
+  margin-bottom: var(--space-6);
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid
+    color-mix(in srgb, var(--color-discovery-primary) 45%, var(--color-border-subtle));
+  border-radius: var(--radius-lg);
+  background: var(--color-workspace-canvas);
+  box-sizing: border-box;
+}
+
+.session-canvas-header--section {
+  position: relative;
+  padding-top: var(--space-7);
+}
+
+.session-canvas-header__main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+.session-canvas-header__brand {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  min-width: 0;
+  flex: 1 1 16rem;
+}
+
+.session-canvas-header__mark {
+  flex-shrink: 0;
+  margin-top: var(--space-1);
+}
+
+.session-canvas-header__copy {
+  min-width: 0;
+}
+
+.session-canvas-header__copy .eyebrow {
+  margin: 0;
+}
+
+.session-canvas-header h2 {
+  margin: var(--space-1) 0 var(--space-2);
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+}
+
+.session-canvas-header__purpose {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  max-width: 40rem;
+  font-size: var(--font-size-body);
+}
+
+.session-canvas-header__aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-4);
+  margin-left: auto;
+  flex-shrink: 0;
+  min-width: 10rem;
+}
+
+@media (max-width: 720px) {
+  .session-canvas-header__aside {
+    align-items: flex-start;
+    margin-left: 0;
+    width: 100%;
+  }
+}
