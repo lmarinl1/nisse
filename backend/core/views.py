@@ -6,8 +6,11 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Study, ensure_profile
+from .models import Study, ensure_case_framework, ensure_profile
 from .serializers import (
+    CaseFrameworkSectionSerializer,
+    CaseFrameworkSectionWriteSerializer,
+    CaseFrameworkSerializer,
     LoginSerializer,
     ProfileSerializer,
     RegisterSerializer,
@@ -127,3 +130,31 @@ class StudyArchiveView(APIView):
         study = get_object_or_404(Study, pk=pk, owner=request.user)
         study.archive()
         return Response(StudySerializer(study).data)
+
+
+class CaseFrameworkDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        study = get_object_or_404(Study, pk=pk, owner=request.user)
+        framework = ensure_case_framework(study)
+        return Response(CaseFrameworkSerializer(framework).data)
+
+
+class CaseFrameworkSectionPatchView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, pk, section_type):
+        study = get_object_or_404(Study, pk=pk, owner=request.user)
+        framework = ensure_case_framework(study)
+        section = get_object_or_404(
+            framework.sections,
+            section_type=section_type,
+        )
+        serializer = CaseFrameworkSectionWriteSerializer(
+            data=request.data,
+            context={"section": section},
+        )
+        serializer.is_valid(raise_exception=True)
+        section = serializer.save()
+        return Response(CaseFrameworkSectionSerializer(section).data)

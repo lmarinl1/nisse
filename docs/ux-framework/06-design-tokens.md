@@ -112,6 +112,17 @@ color.error
 color.info
 ```
 
+## Scrollbar (chrome de desplazamiento)
+
+Ver también `01-visual-language.md` § Scrollbar.
+
+``` yaml
+scrollbar.size
+scrollbar.thumb          # discovery yellow
+scrollbar.thumbHover
+scrollbar.trackLine      # thin discovery line
+```
+
 ------------------------------------------------------------------------
 
 # Typography Tokens

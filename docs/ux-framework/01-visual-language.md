@@ -424,3 +424,42 @@ Toda nueva interfaz debe responder:
 -   ¿Podría confundirse con un dashboard tradicional?
 
 Si la última respuesta es sí, debe rediseñarse.
+
+------------------------------------------------------------------------
+
+# Scrollbar / Chrome de desplazamiento
+
+Estándar de producto para **todas** las superficies con overflow en NISSE.
+
+## Metáfora
+
+Una **línea fina** como guía; un **círculo o cápsula** discovery que se desliza por ella.
+No un riel/track convencional ancho ni un scrollbar de SO “pesado”.
+
+Referencia: thumb circular/cápsula sobre línea (amarillo discovery en producto).
+
+## Apariencia
+
+| Pieza | Tratamiento |
+|-------|-------------|
+| Track | Transparente; línea fina (1px) en tono discovery tenue |
+| Thumb | Cápsula o círculo, `border-radius` pleno, color `--color-discovery-primary` (o mix suave) |
+| Ancho | Muy delgado (`~4px` en WebKit; `scrollbar-width: thin` en Firefox) |
+
+## Tokens (CSS)
+
+Usar tokens compartidos en `frontend/src/shared/tokens/tokens.css`:
+
+- `--scrollbar-size`
+- `--scrollbar-thumb`
+- `--scrollbar-thumb-hover`
+- `--scrollbar-track-line`
+
+## Reglas
+
+1. Un solo estándar en toda la app (Workspace, Marco, Drawer, listas).
+2. No inventar scrollbars locales divergentes salvo excepción documentada.
+3. Botones ▲▼ en extremos del mockup son **opcionales** / futuro; v1 no los exige.
+4. Respetar `prefers-reduced-motion` (sin animar el thumb de más).
+
+Implementación de referencia: reglas globales en tokens/`index.css` sobre superficies de producto.

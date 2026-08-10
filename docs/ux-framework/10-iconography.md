@@ -110,6 +110,7 @@ pinta iconos UI ni el lockup de producto. Ver `13-brand-mark.md`.
 | `candidates` | `CandidatesIcon` | Candidatos / alternativas |
 | `chat` | `ChatIcon` | Entrada de diálogo del Companion (UI), no “chat genérico” |
 | `check` | `CheckIcon` | Confirmación / éxito |
+| `chevron-down` | `ChevronDownIcon` | Desplegar / replegar (acordeón); rotar en CSS |
 | `close` | `CloseIcon` | Cerrar drawer / panel |
 | `decision` | `DecisionIcon` | Bifurcación / decisión |
 | `document` | `DocumentIcon` | Evidencia / documento |

@@ -15,4 +15,14 @@ urlpatterns = [
         views.StudyArchiveView.as_view(),
         name="study-archive",
     ),
+    path(
+        "studies/<str:pk>/case-framework/",
+        views.CaseFrameworkDetailView.as_view(),
+        name="study-case-framework",
+    ),
+    path(
+        "studies/<str:pk>/case-framework/sections/<str:section_type>/",
+        views.CaseFrameworkSectionPatchView.as_view(),
+        name="study-case-framework-section",
+    ),
 ]

@@ -15,7 +15,7 @@ Para profundidad en un chat, cita el archivo con `@docs/ux-framework/...`.
 | Archivo | Tema |
 |---------|------|
 | `00-philosophy.md` | Filosofía |
-| `01-visual-language.md` | Lenguaje visual |
+| `01-visual-language.md` | Lenguaje visual (incluye scrollbar / chrome de desplazamiento) |
 | `02-components.md` | Componentes |
 | `03-patterns.md` | Patrones |
 | `04-cognitive-objects.md` | Objetos cognitivos |
