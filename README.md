@@ -232,7 +232,7 @@ Todo (agente, docs, scripts) se ejecuta en **WSL2** con la distro `Ubuntu-24.04`
 # Entrar al repo desde Windows
 wsl -d Ubuntu-24.04
 
-cd "/mnt/c/Users/lmari/OneDrive/Escritorio/Maestría/Codigo/nisse"
+cd "/mnt/c/Users/xxxxx/OneDrive/Escritorio/Maestría/Codigo/nisse"
 ```
 
 ## Requisitos (dentro de WSL)
@@ -245,7 +245,7 @@ cd "/mnt/c/Users/lmari/OneDrive/Escritorio/Maestría/Codigo/nisse"
 Setup inicial (una vez):
 
 ```bash
-wsl -d Ubuntu-24.04 -- bash "/mnt/c/Users/lmari/OneDrive/Escritorio/Maestría/Codigo/nisse/scripts/setup-wsl.sh"
+wsl -d Ubuntu-24.04 -- bash "/mnt/c/Users/xxxx/OneDrive/Escritorio/Maestría/Codigo/nisse/scripts/setup-wsl.sh"
 ```
 
 ## Arranque rápido
