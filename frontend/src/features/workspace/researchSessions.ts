@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react'
 import {
+  BranchIcon,
   CheckIcon,
   CompassIcon,
   ConstellationIcon,
@@ -14,6 +15,7 @@ import {
 
 export type ResearchSessionId =
   | 'case-framework'
+  | 'time-derivations'
   | 'timelines'
   | 'evolution-forces'
   | 'critical-axes'
@@ -38,6 +40,11 @@ export const RESEARCH_SESSIONS: readonly ResearchSession[] = [
     id: 'case-framework',
     label: 'Marco del objeto de estudio',
     Icon: DocumentIcon,
+  },
+  {
+    id: 'time-derivations',
+    label: 'Derivaciones del tiempo',
+    Icon: BranchIcon,
   },
   {
     id: 'timelines',
@@ -107,6 +114,10 @@ export function caseFrameworkSectionPath(
   section: string,
 ): string {
   return `/studies/${studyId}/case-framework/${section}`
+}
+
+export function timeDerivationsPath(studyId: string): string {
+  return `/studies/${studyId}/time-derivations`
 }
 
 export function timelinesPath(studyId: string): string {

@@ -1,0 +1,179 @@
+.time-derivations {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  position: relative;
+}
+
+.time-derivations--message {
+  display: grid;
+  place-content: center;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.time-derivations__banner {
+  margin: 0 var(--space-4);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.time-derivations__empty-hint {
+  margin: 0 var(--space-4) var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  max-width: 42rem;
+}
+
+.time-derivations__stage {
+  flex: 1;
+  min-height: 0;
+  border-top: 1px solid var(--color-border-subtle);
+  position: relative;
+}
+
+.time-derivations__stage .react-flow {
+  background: transparent;
+}
+
+.time-derivations__fab {
+  position: absolute;
+  right: var(--space-5);
+  bottom: var(--space-5);
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  padding: 0.65rem 1.1rem;
+  border-radius: var(--radius-md);
+  box-shadow: none;
+}
+
+.time-derivations__fab-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.time-derivations--drawer-open .time-derivations__stage {
+  /* Keep graph readable while drawer (~1/3) is open */
+  margin-right: 0;
+}
+
+@media (max-width: 720px) {
+  .time-derivations__fab-label {
+    /* Icon-forward on narrow stages; label remains for a11y via aria-label */
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .time-derivations__fab {
+    min-width: 2.75rem;
+    justify-content: center;
+    padding: 0.7rem;
+  }
+}
+
+.td-node {
+  min-width: 9rem;
+  max-width: 16rem;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-elevated, var(--color-surface));
+  color: var(--color-text-primary);
+  box-shadow: none;
+}
+
+.td-node--root {
+  min-width: 12rem;
+  border-color: var(--color-discovery, var(--color-accent));
+  background: color-mix(in srgb, var(--color-surface) 88%, var(--color-discovery, #e8c547) 12%);
+}
+
+.td-node--speculative {
+  border-style: dashed;
+}
+
+.td-node__eyebrow {
+  margin: 0 0 var(--space-1);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.td-node__name {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.td-handle {
+  width: 8px !important;
+  height: 8px !important;
+  background: var(--color-discovery, #e8c547) !important;
+  border: 1px solid var(--color-border-subtle) !important;
+}
+
+.td-edge {
+  stroke: var(--color-text-muted) !important;
+}
+
+.td-controls {
+  border: 1px solid var(--color-border-subtle) !important;
+  border-radius: var(--radius-sm) !important;
+  overflow: hidden;
+  box-shadow: none !important;
+  background: var(--color-surface) !important;
+}
+
+.td-controls button {
+  background: var(--color-surface) !important;
+  border-bottom: 1px solid var(--color-border-subtle) !important;
+  fill: var(--color-text-primary) !important;
+}
+
+.td-controls button:hover {
+  background: color-mix(in srgb, var(--color-surface) 80%, var(--color-discovery, #e8c547) 20%) !important;
+}
+
+.td-minimap {
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border-subtle) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+.td-root-meta {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+}
+
+.td-root-meta dt {
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-1);
+}
+
+.td-root-meta dd {
+  margin: 0;
+  color: var(--color-text-primary);
+}

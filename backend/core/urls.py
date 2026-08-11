@@ -70,4 +70,34 @@ urlpatterns = [
         views.RecallCollapseCreateView.as_view(),
         name="study-recall-collapses",
     ),
+    path(
+        "studies/<str:pk>/recalls/",
+        views.StudyRecallListView.as_view(),
+        name="study-recall-list",
+    ),
+    path(
+        "studies/<str:pk>/derivations/",
+        views.DerivationGraphView.as_view(),
+        name="study-derivations-graph",
+    ),
+    path(
+        "studies/<str:pk>/derivations/nodes/",
+        views.DerivationNodeListCreateView.as_view(),
+        name="study-derivations-nodes",
+    ),
+    path(
+        "studies/<str:pk>/derivations/nodes/<str:node_id>/",
+        views.DerivationNodeDetailView.as_view(),
+        name="study-derivations-node-detail",
+    ),
+    path(
+        "studies/<str:pk>/derivations/edges/",
+        views.DerivationEdgeListCreateView.as_view(),
+        name="study-derivations-edges",
+    ),
+    path(
+        "studies/<str:pk>/derivations/edges/<str:edge_id>/",
+        views.DerivationEdgeDetailView.as_view(),
+        name="study-derivations-edge-detail",
+    ),
 ]

@@ -345,7 +345,7 @@
 
 .timelines--drawer-open .timeline-canvas,
 .timelines--drawer-open.timelines {
-  padding-right: min(28rem, 40vw);
+  padding-right: var(--drawer-width);
 }
 
 @keyframes timeline-node-in {

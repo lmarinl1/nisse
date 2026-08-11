@@ -94,8 +94,8 @@
   --z-drawer: 40;
   --z-drawer-backdrop: 39;
 
-  /* Research Drawer (~1/4 viewport) */
-  --drawer-width: clamp(18rem, 25vw, 28rem);
+  /* Research Drawer (~1/3 viewport on desktop) */
+  --drawer-width: clamp(20rem, 33.333vw, 36rem);
   --drawer-title-color: var(--color-discovery-primary);
 
   /* App defaults */

@@ -16,6 +16,7 @@ import {
   TimelineDetailRoute,
   TimelinesOverviewRoute,
 } from '../features/timelines/TimelinesRoutes'
+import { TimeDerivationsRoute } from '../features/time-derivations/TimeDerivationsRoutes'
 import { ResearchSessionCanvas } from '../features/workspace/ResearchSessionCanvas'
 import { StudyWorkspace } from '../features/workspace/StudyWorkspace'
 import { DEFAULT_RESEARCH_SESSION } from '../features/workspace/researchSessions'
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
           {
             path: 'case-framework/:section',
             element: <CaseFrameworkSectionRoute />,
+          },
+          {
+            path: 'time-derivations',
+            element: <TimeDerivationsRoute />,
           },
           { path: 'timelines', element: <TimelinesOverviewRoute /> },
           {

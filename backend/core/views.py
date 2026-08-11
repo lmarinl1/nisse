@@ -135,6 +135,9 @@ class StudyListCreateView(APIView):
                 description=serializer.validated_data.get("description", ""),
             )
             create_principal_timeline(study)
+        from .derivations import try_ensure_graph
+
+        try_ensure_graph(str(study.pk), study.name)
         return Response(StudySerializer(study).data, status=status.HTTP_201_CREATED)
 
 
@@ -152,9 +155,14 @@ class StudyDetailView(APIView):
         study = self._owned_study(request, pk)
         serializer = StudyWriteSerializer(study, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
+        name_changed = "name" in serializer.validated_data
         for field, value in serializer.validated_data.items():
             setattr(study, field, value)
         study.save()
+        if name_changed:
+            from .derivations import try_sync_root_name
+
+            try_sync_root_name(str(study.pk), study.name)
         return Response(StudySerializer(study).data)
 
 
@@ -463,4 +471,200 @@ class RecallCollapseCreateView(APIView):
             RecallSerializer(recall).data,
             status=status.HTTP_201_CREATED,
         )
+
+
+def _derivation_error_response(exc):
+    from .derivations import DerivationError
+
+    if isinstance(exc, DerivationError):
+        return Response({"detail": str(exc)}, status=exc.status)
+    raise exc
+
+
+def _enrich_graph_with_recalls(study: Study, graph: dict) -> dict:
+    """Attach recall context from Mongo; soft-degrade missing recalls."""
+    recall_ids = [
+        node.get("recall_id")
+        for node in graph.get("nodes", [])
+        if node.get("kind") == "derivation" and node.get("recall_id")
+    ]
+    recalls_by_id = {}
+    if recall_ids:
+        for recall in Recall.objects.filter(study=study, pk__in=recall_ids).select_related(
+            "home_timeline"
+        ):
+            recalls_by_id[str(recall.pk)] = {
+                "id": str(recall.pk),
+                "title": recall.title,
+                "temporal_year": recall.temporal_year,
+                "temporal_month": recall.temporal_month,
+                "temporal_day": recall.temporal_day,
+                "timeline_id": str(recall.home_timeline_id),
+                "timeline_name": recall.home_timeline.name,
+            }
+    for node in graph.get("nodes", []):
+        if node.get("kind") != "derivation":
+            continue
+        rid = node.get("recall_id")
+        if not rid:
+            node["recall"] = None
+            node["recall_missing"] = False
+            continue
+        if rid in recalls_by_id:
+            node["recall"] = recalls_by_id[rid]
+            node["recall_missing"] = False
+        else:
+            node["recall"] = None
+            node["recall_missing"] = True
+    graph["study"] = {
+        "id": str(study.pk),
+        "name": study.name,
+        "description": study.description,
+    }
+    return graph
+
+
+class StudyRecallListView(APIView):
+    """Study-wide recalls for derivation ↔ recuerdo picker (Mongo)."""
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        study = _owned_study(request, pk)
+        recalls = (
+            Recall.objects.filter(study=study)
+            .select_related("home_timeline")
+            .order_by("sort_key", "created_at")
+        )
+        payload = [
+            {
+                "id": str(r.pk),
+                "title": r.title,
+                "temporal_year": r.temporal_year,
+                "temporal_month": r.temporal_month,
+                "temporal_day": r.temporal_day,
+                "timeline_id": str(r.home_timeline_id),
+                "timeline_name": r.home_timeline.name,
+            }
+            for r in recalls
+        ]
+        return Response(payload)
+
+
+class DerivationGraphView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        from .derivations import DerivationError, get_graph
+
+        study = _owned_study(request, pk)
+        try:
+            graph = get_graph(str(study.pk), study.name)
+        except DerivationError as exc:
+            return _derivation_error_response(exc)
+        except Exception:
+            return Response(
+                {"detail": "No pudimos cargar las derivaciones."},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+        return Response(_enrich_graph_with_recalls(study, graph))
+
+
+class DerivationNodeListCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        from .derivations import DerivationError, create_node
+
+        study = _owned_study(request, pk)
+        data = request.data
+        recall_id = data.get("recall_id") or None
+        if recall_id:
+            if not Recall.objects.filter(study=study, pk=recall_id).exists():
+                return Response(
+                    {"detail": "El recuerdo debe pertenecer a este Objeto de Estudio."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        try:
+            node = create_node(
+                str(study.pk),
+                name=data.get("name", ""),
+                description_markdown=data.get("description_markdown", ""),
+                derivation_type=data.get("derivation_type", "other"),
+                impact=data.get("impact", "medium"),
+                is_speculative=bool(data.get("is_speculative", False)),
+                recall_id=recall_id,
+                position_x=float(data.get("position_x", 120)),
+                position_y=float(data.get("position_y", 120)),
+                source_node_id=data.get("source_node_id"),
+            )
+        except DerivationError as exc:
+            return _derivation_error_response(exc)
+        return Response(node, status=status.HTTP_201_CREATED)
+
+
+class DerivationNodeDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, pk, node_id):
+        from .derivations import DerivationError, update_node
+
+        study = _owned_study(request, pk)
+        data = dict(request.data)
+        if "recall_id" in data:
+            recall_id = data.get("recall_id") or None
+            if recall_id and not Recall.objects.filter(study=study, pk=recall_id).exists():
+                return Response(
+                    {"detail": "El recuerdo debe pertenecer a este Objeto de Estudio."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            data["recall_id"] = recall_id
+        try:
+            node = update_node(str(study.pk), node_id, data)
+        except DerivationError as exc:
+            return _derivation_error_response(exc)
+        return Response(node)
+
+    def delete(self, request, pk, node_id):
+        from .derivations import DerivationError, delete_node
+
+        _owned_study(request, pk)
+        try:
+            delete_node(str(pk), node_id)
+        except DerivationError as exc:
+            return _derivation_error_response(exc)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class DerivationEdgeListCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        from .derivations import DerivationError, create_edge
+
+        _owned_study(request, pk)
+        try:
+            edge = create_edge(
+                str(pk),
+                request.data.get("source_node_id", ""),
+                request.data.get("target_node_id", ""),
+                request.data.get("relationship_type", "derives_toward"),
+            )
+        except DerivationError as exc:
+            return _derivation_error_response(exc)
+        return Response(edge, status=status.HTTP_201_CREATED)
+
+
+class DerivationEdgeDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, pk, edge_id):
+        from .derivations import DerivationError, delete_edge
+
+        _owned_study(request, pk)
+        try:
+            delete_edge(str(pk), edge_id)
+        except DerivationError as exc:
+            return _derivation_error_response(exc)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 

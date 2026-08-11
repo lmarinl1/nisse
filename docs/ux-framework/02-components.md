@@ -249,14 +249,19 @@ Ubicaciones:
 En producto, el instrumento compartido es `ResearchDrawer`
 (`frontend/src/shared/ui/`):
 
--   ancla derecha ≈ ¼ del viewport (`--drawer-width`)
+-   ancla derecha ≈ **⅓ del viewport** en desktop (`--drawer-width`, tipicamente
+    `clamp(20rem, 33.333vw, 36rem)`)
+-   en viewports estrechos puede acercarse al ancho completo como slide-over derecho
+-   formularios en **una columna**, ritmo vertical limpio; acciones primarias en el footer
 -   título en Discovery Yellow
 -   brand mark con estrellas en el header
 -   CTA Guardar/Crear/Actualizar con `btn-discovery`
 -   Select accesible: `ResearchSelect` (Radix + tokens NISSE)
 
+El Canvas debe permanecer parcialmente visible; preferir Drawer antes que Modal.
+
 El header homologado de Canvas de subitem/sesión es `SessionCanvasHeader`
-(mark + eyebrow + título + propósito + aside).
+(mark + eyebrow + título + propósito + aside opcional).
 
 ------------------------------------------------------------------------
 

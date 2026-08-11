@@ -515,3 +515,138 @@ export async function createCollapse(
     },
   )
 }
+
+/* --- Time derivations (Neo4j via Django; Mongo for Study/Recall) --- */
+
+export type DerivationNodeKind = 'root' | 'derivation'
+
+export type DerivationRecallRef = {
+  id: string
+  title: string
+  temporal_year: number
+  temporal_month: number | null
+  temporal_day: number | null
+  timeline_id: string
+  timeline_name: string
+}
+
+export type DerivationNode = {
+  id: string
+  kind: DerivationNodeKind
+  name: string
+  position_x: number
+  position_y: number
+  created_at?: string
+  updated_at?: string
+  description_markdown?: string
+  derivation_type?: string
+  impact?: string
+  is_speculative?: boolean
+  recall_id?: string | null
+  recall?: DerivationRecallRef | null
+  recall_missing?: boolean
+}
+
+export type DerivationEdge = {
+  id: string
+  source_node_id: string
+  target_node_id: string
+  relationship_type: string
+  created_at?: string
+  updated_at?: string
+}
+
+export type DerivationGraph = {
+  study_id: string
+  nodes: DerivationNode[]
+  edges: DerivationEdge[]
+  derivation_count: number
+  edge_count: number
+  study: {
+    id: string
+    name: string
+    description: string
+  }
+}
+
+export type DerivationNodeInput = {
+  name: string
+  description_markdown?: string
+  derivation_type?: string
+  impact?: string
+  is_speculative?: boolean
+  recall_id?: string | null
+  position_x?: number
+  position_y?: number
+  source_node_id?: string
+}
+
+export type DerivationNodePatch = Partial<DerivationNodeInput> & {
+  position_x?: number
+  position_y?: number
+}
+
+export async function getDerivationGraph(
+  studyId: string,
+): Promise<DerivationGraph> {
+  return apiFetch<DerivationGraph>(`/studies/${studyId}/derivations/`)
+}
+
+export async function createDerivationNode(
+  studyId: string,
+  input: DerivationNodeInput,
+): Promise<DerivationNode & { created_edge?: DerivationEdge }> {
+  return apiFetch(`/studies/${studyId}/derivations/nodes/`, {
+    method: 'POST',
+    body: JSON.stringify(input),
+  })
+}
+
+export async function updateDerivationNode(
+  studyId: string,
+  nodeId: string,
+  patch: DerivationNodePatch,
+): Promise<DerivationNode> {
+  return apiFetch(`/studies/${studyId}/derivations/nodes/${nodeId}/`, {
+    method: 'PATCH',
+    body: JSON.stringify(patch),
+  })
+}
+
+export async function deleteDerivationNode(
+  studyId: string,
+  nodeId: string,
+): Promise<void> {
+  await apiFetch(`/studies/${studyId}/derivations/nodes/${nodeId}/`, {
+    method: 'DELETE',
+  })
+}
+
+export async function createDerivationEdge(
+  studyId: string,
+  sourceNodeId: string,
+  targetNodeId: string,
+): Promise<DerivationEdge> {
+  return apiFetch(`/studies/${studyId}/derivations/edges/`, {
+    method: 'POST',
+    body: JSON.stringify({
+      source_node_id: sourceNodeId,
+      target_node_id: targetNodeId,
+    }),
+  })
+}
+
+export async function deleteDerivationEdge(
+  studyId: string,
+  edgeId: string,
+): Promise<void> {
+  await apiFetch(`/studies/${studyId}/derivations/edges/${edgeId}/`, {
+    method: 'DELETE',
+  })
+}
+
+export async function listStudyRecalls(
+  studyId: string,
+): Promise<DerivationRecallRef[]> {
+  return apiFetch<DerivationRecallRef[]>(`/studies/${studyId}/recalls/`)
+}

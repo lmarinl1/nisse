@@ -520,3 +520,139 @@ class TimelineApiTests(APITestCase):
             format="json",
         )
         self.assertEqual(blocked.status_code, 400)
+
+
+class DerivationGraphApiTests(APITestCase):
+    def setUp(self):
+        self.password = "research-lab-pass-1"
+        self.user = User.objects.create_user(
+            username="deriv-owner",
+            password=self.password,
+        )
+        ensure_profile(self.user)
+        self.token = Token.objects.create(user=self.user)
+        self.other = User.objects.create_user(
+            username="deriv-other",
+            password=self.password,
+        )
+        ensure_profile(self.other)
+        self.other_token = Token.objects.create(user=self.other)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Token {self.token.key}")
+
+    def _create_study(self, name="Estudio derivaciones"):
+        resp = self.client.post(
+            "/api/studies/",
+            {"name": name, "description": "desc"},
+            format="json",
+        )
+        self.assertEqual(resp.status_code, 201)
+        return resp.json()["id"]
+
+    def test_graph_ensure_idempotent_and_root_protected(self):
+        study_id = self._create_study()
+        first = self.client.get(f"/api/studies/{study_id}/derivations/")
+        self.assertEqual(first.status_code, 200)
+        body = first.json()
+        self.assertEqual(body["derivation_count"], 0)
+        roots = [n for n in body["nodes"] if n["kind"] == "root"]
+        self.assertEqual(len(roots), 1)
+        self.assertEqual(roots[0]["name"], "Estudio derivaciones")
+        root_id = roots[0]["id"]
+
+        second = self.client.get(f"/api/studies/{study_id}/derivations/")
+        self.assertEqual(second.status_code, 200)
+        self.assertEqual(len(second.json()["nodes"]), 1)
+
+        denied = self.client.delete(
+            f"/api/studies/{study_id}/derivations/nodes/{root_id}/",
+        )
+        self.assertEqual(denied.status_code, 400)
+
+    def test_foreign_study_denied(self):
+        study_id = self._create_study()
+        self.client.credentials(
+            HTTP_AUTHORIZATION=f"Token {self.other_token.key}",
+        )
+        resp = self.client.get(f"/api/studies/{study_id}/derivations/")
+        self.assertEqual(resp.status_code, 404)
+
+    def test_create_connect_move_disconnect_delete(self):
+        study_id = self._create_study("Grafo A")
+        graph = self.client.get(f"/api/studies/{study_id}/derivations/").json()
+        root_id = next(n["id"] for n in graph["nodes"] if n["kind"] == "root")
+
+        created = self.client.post(
+            f"/api/studies/{study_id}/derivations/nodes/",
+            {
+                "name": "Cyberpunk",
+                "derivation_type": "art_movement",
+                "impact": "high",
+                "is_speculative": True,
+                "source_node_id": root_id,
+                "position_x": 200,
+                "position_y": 80,
+            },
+            format="json",
+        )
+        self.assertEqual(created.status_code, 201)
+        node_id = created.json()["id"]
+        self.assertIn("created_edge", created.json())
+
+        moved = self.client.patch(
+            f"/api/studies/{study_id}/derivations/nodes/{node_id}/",
+            {"position_x": 333, "position_y": 111},
+            format="json",
+        )
+        self.assertEqual(moved.status_code, 200)
+        self.assertEqual(moved.json()["position_x"], 333)
+
+        second = self.client.post(
+            f"/api/studies/{study_id}/derivations/nodes/",
+            {"name": "Posthumano", "position_x": 40, "position_y": 200},
+            format="json",
+        )
+        self.assertEqual(second.status_code, 201)
+        second_id = second.json()["id"]
+
+        edge = self.client.post(
+            f"/api/studies/{study_id}/derivations/edges/",
+            {"source_node_id": node_id, "target_node_id": second_id},
+            format="json",
+        )
+        self.assertEqual(edge.status_code, 201)
+        edge_id = edge.json()["id"]
+
+        deleted_edge = self.client.delete(
+            f"/api/studies/{study_id}/derivations/edges/{edge_id}/",
+        )
+        self.assertEqual(deleted_edge.status_code, 204)
+
+        after = self.client.get(f"/api/studies/{study_id}/derivations/").json()
+        self.assertEqual(after["derivation_count"], 2)
+        self.assertTrue(all(e["id"] != edge_id for e in after["edges"]))
+
+        deleted_node = self.client.delete(
+            f"/api/studies/{study_id}/derivations/nodes/{node_id}/",
+        )
+        self.assertEqual(deleted_node.status_code, 204)
+        final = self.client.get(f"/api/studies/{study_id}/derivations/").json()
+        self.assertEqual(final["derivation_count"], 1)
+        self.assertTrue(all(n["id"] != node_id for n in final["nodes"]))
+        # Incident edges to deleted node must be gone
+        self.assertTrue(
+            all(
+                e["source_node_id"] != node_id and e["target_node_id"] != node_id
+                for e in final["edges"]
+            )
+        )
+
+    def test_rename_study_syncs_root_on_get(self):
+        study_id = self._create_study("Nombre viejo")
+        self.client.patch(
+            f"/api/studies/{study_id}/",
+            {"name": "Nombre nuevo"},
+            format="json",
+        )
+        graph = self.client.get(f"/api/studies/{study_id}/derivations/").json()
+        root = next(n for n in graph["nodes"] if n["kind"] == "root")
+        self.assertEqual(root["name"], "Nombre nuevo")

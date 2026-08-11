@@ -230,22 +230,26 @@ export function RecallDrawer({
             required
           />
         </FormField>
-        <label className="research-field research-field--checkbox">
+        <label className="research-field research-field--checkbox" htmlFor="recall-bce">
           <input
+            id="recall-bce"
             type="checkbox"
             checked={isBce}
             onChange={(e) => setIsBce(e.target.checked)}
           />
           Antes de Cristo (a.C.)
         </label>
-        <MarkdownResearchEditor
-          id={`recall-desc-${activeRecall.id}`}
-          title="Descripción"
-          subtitle="Qué ocurrió"
-          guidingQuestion="¿Qué rastro deja este acontecimiento en la emergencia del problema?"
-          value={description}
-          onChange={setDescription}
-        />
+        <div className="research-drawer__section">
+          <p className="research-drawer__section-title">Narrativa</p>
+          <MarkdownResearchEditor
+            id={`recall-desc-${activeRecall.id}`}
+            title="Descripción"
+            subtitle="Qué ocurrió"
+            guidingQuestion="¿Qué rastro deja este acontecimiento en la emergencia del problema?"
+            value={description}
+            onChange={setDescription}
+          />
+        </div>
         {error ? <p className="form-error">{error}</p> : null}
       </form>
 
