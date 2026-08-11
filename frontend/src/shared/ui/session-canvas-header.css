@@ -3,7 +3,8 @@
   flex-direction: column;
   gap: var(--space-4);
   width: 100%;
-  max-width: none;
+  max-width: 100%;
+  min-width: 0;
   margin-bottom: var(--space-6);
   padding: var(--space-4) var(--space-5);
   border: 1px solid
@@ -24,6 +25,8 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-5);
+  width: 100%;
+  min-width: 0;
 }
 
 .session-canvas-header__brand {
@@ -32,6 +35,7 @@
   align-items: flex-start;
   min-width: 0;
   flex: 1 1 16rem;
+  max-width: 100%;
 }
 
 .session-canvas-header__mark {
@@ -41,6 +45,7 @@
 
 .session-canvas-header__copy {
   min-width: 0;
+  max-width: 100%;
 }
 
 .session-canvas-header__copy .eyebrow {
@@ -54,6 +59,7 @@
   font-weight: var(--font-weight-medium);
   letter-spacing: -0.02em;
   color: var(--color-text-primary);
+  overflow-wrap: anywhere;
 }
 
 .session-canvas-header__purpose {
@@ -70,14 +76,43 @@
   align-items: flex-end;
   gap: var(--space-4);
   margin-left: auto;
-  flex-shrink: 0;
-  min-width: 10rem;
+  min-width: 0;
+  max-width: 100%;
+  flex: 0 1 auto;
+  box-sizing: border-box;
+}
+
+/* Overview: tracking/actions as a full-width band under brand + copy */
+.session-canvas-header--overview .session-canvas-header__main {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.session-canvas-header--overview .session-canvas-header__brand {
+  flex: 1 1 auto;
+  width: 100%;
+}
+
+.session-canvas-header--overview .session-canvas-header__aside {
+  flex: 1 1 auto;
+  width: 100%;
+  margin-left: 0;
+  align-items: stretch;
+}
+
+/* Section: keep status aside right-aligned when space allows */
+.session-canvas-header--section .session-canvas-header__aside {
+  flex: 0 1 auto;
+  align-items: flex-end;
+  margin-left: auto;
 }
 
 @media (max-width: 720px) {
-  .session-canvas-header__aside {
+  .session-canvas-header__aside,
+  .session-canvas-header--section .session-canvas-header__aside {
     align-items: flex-start;
     margin-left: 0;
     width: 100%;
+    flex: 1 1 100%;
   }
 }
