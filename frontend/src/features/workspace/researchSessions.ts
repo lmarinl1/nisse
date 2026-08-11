@@ -1,14 +1,14 @@
 import type { ComponentType } from 'react'
 import {
-  CalendarIcon,
-  CandidatesIcon,
   CheckIcon,
-  DecisionIcon,
+  CompassIcon,
+  ConstellationIcon,
   DocumentIcon,
-  EyeIcon,
-  FilterIcon,
-  GraphIcon,
-  TimelineIcon,
+  OrbitIcon,
+  PerspectiveIcon,
+  TelescopeIcon,
+  TimelineClockIcon,
+  TrajectoryIcon,
   type IconSize,
 } from '../../shared/icons'
 
@@ -42,27 +42,27 @@ export const RESEARCH_SESSIONS: readonly ResearchSession[] = [
   {
     id: 'timelines',
     label: 'Líneas de tiempo',
-    Icon: CalendarIcon,
+    Icon: TimelineClockIcon,
   },
   {
     id: 'evolution-forces',
     label: 'Fuerzas de evolución',
-    Icon: TimelineIcon,
+    Icon: TrajectoryIcon,
   },
   {
     id: 'critical-axes',
     label: 'Ejes críticos',
-    Icon: DecisionIcon,
+    Icon: CompassIcon,
   },
   {
     id: 'scenarios',
     label: 'Escenarios',
-    Icon: GraphIcon,
+    Icon: OrbitIcon,
   },
   {
     id: 'narratives',
     label: 'Narrativas',
-    Icon: CandidatesIcon,
+    Icon: ConstellationIcon,
   },
   {
     id: 'validation',
@@ -72,12 +72,12 @@ export const RESEARCH_SESSIONS: readonly ResearchSession[] = [
   {
     id: 'evaluation',
     label: 'Evaluación',
-    Icon: FilterIcon,
+    Icon: PerspectiveIcon,
   },
   {
     id: 'monitoring',
     label: 'Monitoreo',
-    Icon: EyeIcon,
+    Icon: TelescopeIcon,
   },
 ] as const
 

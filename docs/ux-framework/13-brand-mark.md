@@ -12,6 +12,7 @@ Definir el **mark oficial** de NISSE (telescopio) y cómo usarlo en producto,
 documentación y assets.
 
 El brand mark **no** es un icono de UI del set `shared/icons`.
+El glifo UI `telescope` del catálogo **no** sustituye este mark.
 
 - Iconos UI → conceptos / acciones (`10-iconography.md`)
 - Brand mark → identidad de la aplicación (este documento)

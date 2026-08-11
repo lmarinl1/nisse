@@ -2,7 +2,7 @@
 
 ## 10 --- Iconography & Visual Metaphors
 
-Version: 1.1
+Version: 1.2
 
 ------------------------------------------------------------------------
 
@@ -34,8 +34,9 @@ frontend/src/shared/icons/
 └── index.ts       # barrel de importación
 ```
 
-Esto es **iconografía de interfaz**. El logo (telescopio) es otra capa:
-`frontend/public/brand` + `shared/brand` · `13-brand-mark.md`.
+Esto es **iconografía de interfaz** (Set I + Icon Set II). El logo / brand mark
+(telescopio de identidad) es otra capa: `frontend/public/brand` + `shared/brand`
+· `13-brand-mark.md`. El glifo UI `telescope` del catálogo **no** es el brand mark.
 
 Importar siempre desde el barrel:
 
@@ -137,6 +138,65 @@ pinta iconos UI ni el lockup de producto. Ver `13-brand-mark.md`.
 | `warning` | `WarningIcon` | Advertencia / incertidumbre visible |
 | `workspace` | `WorkspaceIcon` | Workspace / laboratorio |
 
+### Icon Set II — tiempo
+
+| name (API) | Componente | Uso semántico sugerido |
+|---|---|---|
+| `calendar-time` | `CalendarTimeIcon` | Fecha + momento / bitácora temporal |
+| `clock` | `ClockIcon` | Tiempo / instante |
+| `clock-fast` | `ClockFastIcon` | Aceleración temporal |
+| `fast-forward` | `FastForwardIcon` | Avance / proyectar adelante |
+| `history` | `HistoryIcon` | Historial / retrospectiva |
+| `hourglass` | `HourglassIcon` | Proceso / espera / maduración |
+| `rewind` | `RewindIcon` | Retroceso / revisar pasado |
+| `timeline-clock` | `TimelineClockIcon` | Línea de tiempo / secuencia temporal |
+| `timer` | `TimerIcon` | Temporizador / ventana de tiempo |
+
+### Icon Set II — astronomía y observación
+
+| name (API) | Componente | Uso semántico sugerido |
+|---|---|---|
+| `comet` | `CometIcon` | Evento / irrupción |
+| `constellation` | `ConstellationIcon` | Narrativa / patrón de relaciones |
+| `eclipse` | `EclipseIcon` | Ocultación / punto ciego |
+| `moon` | `MoonIcon` | Fase / ciclo |
+| `orbit` | `OrbitIcon` | Escenario / trayectoria orbital |
+| `planet` | `PlanetIcon` | Mundo / objeto de estudio |
+| `sun` | `SunIcon` | Fuente / horizonte luminoso |
+| `telescope` | `TelescopeIcon` | Monitoreo / observación (UI; ≠ brand mark) |
+
+### Icon Set II — navegación y orientación
+
+| name (API) | Componente | Uso semántico sugerido |
+|---|---|---|
+| `compass` | `CompassIcon` | Ejes críticos / orientación |
+| `north` | `NorthIcon` | Referencia / rumbo |
+| `route` | `RouteIcon` | Camino / itinerario de investigación |
+| `waypoint` | `WaypointIcon` | Hito / punto de paso |
+
+### Icon Set II — grafos, nodos y relaciones
+
+| name (API) | Componente | Uso semántico sugerido |
+|---|---|---|
+| `branch` | `BranchIcon` | Bifurcación / ramas |
+| `cluster` | `ClusterIcon` | Agrupación / clúster |
+| `directed-edge` | `DirectedEdgeIcon` | Relación dirigida |
+| `edge` | `EdgeIcon` | Arista / vínculo |
+| `hub` | `HubIcon` | Nodo central / hub |
+| `layers` | `LayersIcon` | Capas / estratificación |
+| `network` | `NetworkIcon` | Red / malla |
+| `node` | `NodeIcon` | Nodo |
+| `tree-graph` | `TreeGraphIcon` | Árbol / jerarquía |
+
+### Icon Set II — sistemas y futuros
+
+| name (API) | Componente | Uso semántico sugerido |
+|---|---|---|
+| `forecast` | `ForecastIcon` | Pronóstico / proyección |
+| `perspective` | `PerspectiveIcon` | Evaluación / punto de vista |
+| `signal` | `SignalIcon` | Señal / detector |
+| `trajectory` | `TrajectoryIcon` | Trayectoria / fuerzas de evolución |
+
 Si falta un concepto del Design Language, **extender el set** en `shared/icons` (SVG + registry + named export). No improvisar otro estilo.
 
 ------------------------------------------------------------------------
@@ -145,15 +205,19 @@ Si falta un concepto del Design Language, **extender el set** en `shared/icons` 
 
 ## Investigación
 
-Buscar · Explorar · Observar (`eye`) · Analizar · Comparar
+Buscar · Explorar · Observar (`eye`, `telescope`) · Analizar · Comparar (`perspective`)
 
 ## Conocimiento
 
-Hipótesis · Evidencia (`document`) · Narrativa · Insight (`ai-spark`) · Bitácora (`calendar` / `timeline`)
+Hipótesis · Evidencia (`document`) · Narrativa (`constellation`) · Insight (`ai-spark`) · Bitácora (`calendar` / `timeline-clock` / `history`)
 
 ## Prospectiva
 
-Escenario · Horizonte · Cono · Señal · Driver · Incertidumbre (`warning` / `question`)
+Escenario (`orbit`) · Horizonte · Cono · Señal (`signal`) · Driver · Trayectoria (`trajectory`) · Forecast (`forecast`) · Incertidumbre (`warning` / `question` / `eclipse`)
+
+## Orientación
+
+Brújula (`compass`) · Rumbo (`north`) · Ruta (`route`) · Hito (`waypoint`)
 
 ## IA
 
@@ -161,7 +225,7 @@ Companion (`ai-spark`, `chat`, `send`) · Pensamiento · Generación · Orquesta
 
 ## Sistemas
 
-Grafo (`graph`) · Red · Nodo · Relación (`share` / `graph`) · Flujo · Workspace (`workspace`)
+Grafo (`graph` / `network`) · Nodo (`node`) · Relación (`edge` / `directed-edge` / `share`) · Capas (`layers`) · Workspace (`workspace`)
 
 ------------------------------------------------------------------------
 
@@ -240,17 +304,38 @@ Mapeo de partida (extender cuando exista glifo dedicado):
 | Objeto | Icono actual |
 |---|---|
 | Evidencia | `document` |
-| Timeline | `timeline` |
-| Relación / grafo | `graph` |
+| Timeline | `timeline-clock` (o `timeline` / `history`) |
+| Relación / grafo | `graph` / `network` / `edge` |
+| Escenario | `orbit` |
+| Señal | `signal` |
+| Trayectoria / fuerzas | `trajectory` |
+| Narrativa | `constellation` |
 | Actor (persona) | `user` |
 | Actor (org) | `organization` |
-| Incertidumbre | `warning` / `question` |
+| Incertidumbre | `warning` / `question` / `eclipse` |
 | Workspace | `workspace` |
 | Companion / IA | `ai-spark` / `agent` |
-| Decisión | `decision` |
+| Decisión / ejes | `decision` / `compass` |
 | Alternativas | `candidates` |
+| Monitoreo / observación | `telescope` (UI; ≠ brand mark) |
 
-Cuando se añada un glifo específico (hipótesis, escenario, señal, driver…), actualizar esta tabla y el registry.
+Cuando se añada un glifo específico (hipótesis, driver…), actualizar esta tabla y el registry.
+
+### Sesiones de investigación (Sidebar)
+
+Mapeo preferido tras Icon Set II:
+
+| Sesión | Icono |
+|---|---|
+| Marco del objeto de estudio | `document` |
+| Líneas de tiempo | `timeline-clock` |
+| Fuerzas de evolución | `trajectory` |
+| Ejes críticos | `compass` |
+| Escenarios | `orbit` |
+| Narrativas | `constellation` |
+| Validación | `check` |
+| Evaluación | `perspective` |
+| Monitoreo | `telescope` |
 
 ------------------------------------------------------------------------
 

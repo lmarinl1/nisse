@@ -146,6 +146,142 @@ function WorkspaceIcon() {
   return (<><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></>);
 }
 
+function BranchIcon() {
+  return (<><circle cx="12" cy="4" r="2"/><circle cx="6" cy="11" r="2"/><circle cx="18" cy="11" r="2"/><circle cx="4" cy="19" r="2"/><circle cx="9" cy="19" r="2"/><circle cx="15" cy="19" r="2"/><circle cx="20" cy="19" r="2"/><path d="M12 6v2M12 8 6 9M12 8l6 1M6 13v3M6 16H4M6 16h3M18 13v3M18 16h-3M18 16h2"/></>);
+}
+
+function CalendarTimeIcon() {
+  return (<><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 9h16M12 12v3l2 1"/></>);
+}
+
+function ClockIcon() {
+  return (<><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></>);
+}
+
+function ClockFastIcon() {
+  return (<><circle cx="12" cy="12" r="7"/><path d="M12 8v4l3 2M5 5 3 3M19 5l2-2"/></>);
+}
+
+function ClusterIcon() {
+  return (<><circle cx="7" cy="8" r="3"/><circle cx="16" cy="7" r="2.5"/><circle cx="13" cy="16" r="3.5"/><circle cx="19" cy="17" r="2"/><path d="m9.5 9 3 5M14 8l-1 4M16 9l2 6M9 10l7 5"/></>);
+}
+
+function CometIcon() {
+  return (<><path d="M19 5c-5 0-9 3-9 7 0 3 2 5 5 5 4 0 7-4 7-9 0-1.5-.5-2.5-1.5-3z"/><path d="M9 15 3 21M7 11 2 13M11 8 8 3"/></>);
+}
+
+function CompassIcon() {
+  return (<><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/><circle cx="12" cy="12" r="1"/></>);
+}
+
+function ConstellationIcon() {
+  return (<><circle cx="5" cy="7" r="1.8"/><circle cx="13" cy="4" r="1.8"/><circle cx="19" cy="10" r="1.8"/><circle cx="15" cy="18" r="1.8"/><circle cx="7" cy="16" r="1.8"/><path d="m6.7 6.4 4.6-1.8M14.7 5.2l2.6 3.5M18 11.5l-2 4.8M13.5 17.3l-5-1.8M6.3 14.5 5.5 8.8"/></>);
+}
+
+function DirectedEdgeIcon() {
+  return (<><circle cx="5" cy="17" r="2"/><circle cx="19" cy="7" r="2"/><path d="M6.8 15.8 17 8.4M14.5 8.2 17 8.4l-.8 2.4"/></>);
+}
+
+function EclipseIcon() {
+  return (<><circle cx="12" cy="12" r="8"/><circle cx="15" cy="9" r="7" fill="currentColor" stroke="none"/></>);
+}
+
+function EdgeIcon() {
+  return (<><circle cx="5" cy="17" r="2"/><circle cx="19" cy="7" r="2"/><path d="M6.8 15.8 17.2 8.2"/></>);
+}
+
+function FastForwardIcon() {
+  return (<><path d="m5 7 6 5-6 5zM13 7l6 5-6 5z"/></>);
+}
+
+function ForecastIcon() {
+  return (<><path d="M4 18 9 13l4 3 7-9"/><path d="M16 7h4v4"/></>);
+}
+
+function HistoryIcon() {
+  return (<><path d="M4 12a8 8 0 1 0 2-5.7"/><path d="M4 5v5h5M12 8v5l3 2"/></>);
+}
+
+function HourglassIcon() {
+  return (<><path d="M7 3h10M7 21h10M8 4c0 3 2 4 4 5 2-1 4-2 4-5M8 20c0-3 2-4 4-5 2 1 4 2 4 5"/></>);
+}
+
+function HubIcon() {
+  return (<><circle cx="12" cy="12" r="3"/><circle cx="12" cy="3.5" r="1.8"/><circle cx="20.5" cy="12" r="1.8"/><circle cx="12" cy="20.5" r="1.8"/><circle cx="3.5" cy="12" r="1.8"/><path d="M12 6.5v2.5M15.5 12h2.5M12 15.5v2.5M8.5 12H6"/></>);
+}
+
+function LayersIcon() {
+  return (<><path d="m12 4 8 4-8 4-8-4z"/><path d="m4 12 8 4 8-4M4 16l8 4 8-4"/></>);
+}
+
+function MoonIcon() {
+  return (<><path d="M18 4a8 8 0 1 0 2 14 7 7 0 0 1-2-14Z"/></>);
+}
+
+function NetworkIcon() {
+  return (<><circle cx="5" cy="12" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="12" cy="19" r="2"/><path d="m6.5 10.5 4-4M13.5 6.5l4 4M17.5 13.5l-4 4M10.5 17.5l-4-4"/></>);
+}
+
+function NodeIcon() {
+  return (<><circle cx="12" cy="12" r="3"/><circle cx="4" cy="5" r="2"/><circle cx="20" cy="6" r="2"/><circle cx="18" cy="19" r="2"/><circle cx="5" cy="18" r="2"/><path d="m6 6.5 3.5 3M15 10l3.5-3M14 14l3 3M9 14l-3 3"/></>);
+}
+
+function NorthIcon() {
+  return (<><circle cx="12" cy="12" r="9"/><path d="m12 5 3 7-3-1-3 1zM12 19v-8"/></>);
+}
+
+function OrbitIcon() {
+  return (<><ellipse cx="12" cy="12" rx="9" ry="4"/><ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(60 12 12)"/><circle cx="12" cy="12" r="2"/></>);
+}
+
+function PerspectiveIcon() {
+  return (<><path d="M4 5h16v14H4z"/><path d="M4 19 12 12 20 19M4 5l8 7 8-7"/></>);
+}
+
+function PlanetIcon() {
+  return (<><circle cx="12" cy="12" r="5"/><ellipse cx="12" cy="12" rx="10" ry="3.5"/></>);
+}
+
+function RewindIcon() {
+  return (<><path d="m11 7-6 5 6 5zM19 7l-6 5 6 5z"/></>);
+}
+
+function RouteIcon() {
+  return (<><circle cx="5" cy="18" r="2"/><circle cx="19" cy="6" r="2"/><path d="M7 18c5 0 2-7 7-7s1-5 5-5"/></>);
+}
+
+function SignalIcon() {
+  return (<><path d="M4 18a11 11 0 0 1 16 0M7 15a7 7 0 0 1 10 0M10 12a3 3 0 0 1 4 0"/><circle cx="12" cy="20" r="1"/></>);
+}
+
+function SunIcon() {
+  return (<><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></>);
+}
+
+function TelescopeIcon() {
+  return (<><path d="m6 15 10-6 3 5-10 6z"/><path d="m16 9 2-2 3 5-2 2M6 15l-3 1 2 3 4-1"/></>);
+}
+
+function TimelineClockIcon() {
+  return (<><path d="M4 12h16"/><circle cx="6" cy="12" r="2"/><circle cx="18" cy="12" r="2"/><path d="M18 12V9M18 12l2 1"/></>);
+}
+
+function TimerIcon() {
+  return (<><circle cx="12" cy="13" r="7"/><path d="M12 13V9M9 3h6M12 3v3M19 7l2-2"/></>);
+}
+
+function TrajectoryIcon() {
+  return (<><path d="M4 18c4-9 8-10 16-12"/><circle cx="4" cy="18" r="2"/><circle cx="20" cy="6" r="2"/></>);
+}
+
+function TreeGraphIcon() {
+  return (<><circle cx="12" cy="4" r="2"/><circle cx="7" cy="11" r="2"/><circle cx="17" cy="11" r="2"/><circle cx="4" cy="19" r="2"/><circle cx="10" cy="19" r="2"/><circle cx="17" cy="19" r="2"/><path d="M12 6v2M12 8 7 9M12 8l5 1M7 13v4M17 13v4M7 17h3M17 17h-3"/></>);
+}
+
+function WaypointIcon() {
+  return (<><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></>);
+}
+
 export const icons = {
   "agent": AgentIcon,
   "ai-spark": AiSparkIcon,
@@ -184,6 +320,40 @@ export const icons = {
   "user": UserIcon,
   "warning": WarningIcon,
   "workspace": WorkspaceIcon,
+  "branch": BranchIcon,
+  "calendar-time": CalendarTimeIcon,
+  "clock": ClockIcon,
+  "clock-fast": ClockFastIcon,
+  "cluster": ClusterIcon,
+  "comet": CometIcon,
+  "compass": CompassIcon,
+  "constellation": ConstellationIcon,
+  "directed-edge": DirectedEdgeIcon,
+  "eclipse": EclipseIcon,
+  "edge": EdgeIcon,
+  "fast-forward": FastForwardIcon,
+  "forecast": ForecastIcon,
+  "history": HistoryIcon,
+  "hourglass": HourglassIcon,
+  "hub": HubIcon,
+  "layers": LayersIcon,
+  "moon": MoonIcon,
+  "network": NetworkIcon,
+  "node": NodeIcon,
+  "north": NorthIcon,
+  "orbit": OrbitIcon,
+  "perspective": PerspectiveIcon,
+  "planet": PlanetIcon,
+  "rewind": RewindIcon,
+  "route": RouteIcon,
+  "signal": SignalIcon,
+  "sun": SunIcon,
+  "telescope": TelescopeIcon,
+  "timeline-clock": TimelineClockIcon,
+  "timer": TimerIcon,
+  "trajectory": TrajectoryIcon,
+  "tree-graph": TreeGraphIcon,
+  "waypoint": WaypointIcon,
 } as const;
 
 export type IconName = keyof typeof icons;
