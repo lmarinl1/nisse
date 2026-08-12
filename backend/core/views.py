@@ -100,11 +100,13 @@ class ProfileMeView(APIView):
     def patch(self, request):
         # Identity always comes from the authenticated session — ignore any
         # client-supplied user/profile id for selecting whose profile to mutate.
+        # partial=True allows Apariencia-only updates (theme_preference) without
+        # requiring the full Perfil form payload.
         profile = ensure_profile(request.user)
         serializer = ProfileSerializer(
             profile,
             data=request.data,
-            partial=False,
+            partial=True,
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()

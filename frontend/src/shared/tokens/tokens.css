@@ -1,8 +1,10 @@
 /**
- * NISSE semantic design tokens
+ * NISSE semantic design tokens — dual atmospheres (dark / light)
  * Source: docs/ux-framework/01-visual-language.md, 06-design-tokens.md, 09-motion-language.md
+ * Dark = current observatory depth. Light = warm technical paper.
  */
-:root {
+:root,
+[data-theme="dark"] {
   color-scheme: dark;
 
   /* Workspace */
@@ -38,7 +40,7 @@
   --color-info: #6a9fcf;
   --color-status-success: var(--color-success);
 
-  /* Scrollbar — line + discovery capsule/circle (docs/ux-framework/01-visual-language.md) */
+  /* Scrollbar — line + discovery capsule/circle */
   --scrollbar-size: 4px;
   --scrollbar-thumb: color-mix(in srgb, var(--color-discovery-primary) 70%, transparent);
   --scrollbar-thumb-hover: color-mix(in srgb, var(--color-discovery-primary) 90%, transparent);
@@ -47,6 +49,56 @@
   /* AI (reserved) */
   --color-ai-thinking: #8b9bb4;
 
+  /* Atmosphere wash stops (used by :root background-image) */
+  --atmosphere-wash-cool: color-mix(in srgb, #2a3a55 35%, transparent);
+  --atmosphere-gradient-mid: #0f151c;
+  --atmosphere-gradient-end: #0a0e12;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Workspace — warm technical paper */
+  --color-workspace-background: #f3eee6;
+  --color-workspace-surface: #faf6ef;
+  --color-workspace-panel: #fffdf8;
+  --color-workspace-canvas: #ebe4da;
+
+  /* Discovery slightly deeper for contrast on cream */
+  --color-discovery-primary: #c9a227;
+  --color-discovery-secondary: #a8861f;
+  --color-research-active: #c9a227;
+  --color-research-idle: #7a8494;
+
+  --color-brand-neon: #d7ff2f;
+  --color-brand-deep-space: #05070a;
+
+  --color-text-primary: #1a222c;
+  --color-text-secondary: #5c6675;
+  --color-text-muted: #7a8494;
+
+  --color-border-default: color-mix(in srgb, var(--color-text-primary) 14%, transparent);
+  --color-border-subtle: color-mix(in srgb, var(--color-text-primary) 8%, transparent);
+  --shadow-elevated: 0 12px 36px color-mix(in srgb, #1a222c 12%, transparent);
+
+  --color-success: #2f8f55;
+  --color-warning: #c47a28;
+  --color-error: #c45a54;
+  --color-info: #3d7ab0;
+  --color-status-success: var(--color-success);
+
+  --scrollbar-thumb: color-mix(in srgb, var(--color-discovery-primary) 75%, transparent);
+  --scrollbar-thumb-hover: color-mix(in srgb, var(--color-discovery-primary) 95%, transparent);
+  --scrollbar-track-line: color-mix(in srgb, var(--color-discovery-primary) 32%, transparent);
+
+  --color-ai-thinking: #6b7a90;
+
+  --atmosphere-wash-cool: color-mix(in srgb, #d4c4a8 40%, transparent);
+  --atmosphere-gradient-mid: #efe8dc;
+  --atmosphere-gradient-end: #e8e0d4;
+}
+
+:root {
   /* Typography */
   --font-family-display: "Fraunces", "Iowan Old Style", Georgia, serif;
   --font-family-primary: "Source Sans 3", "Segoe UI", sans-serif;
@@ -113,14 +165,14 @@
     ),
     radial-gradient(
       ellipse 60% 40% at 90% 0%,
-      color-mix(in srgb, #2a3a55 35%, transparent),
+      var(--atmosphere-wash-cool),
       transparent 50%
     ),
     linear-gradient(
       165deg,
       var(--color-workspace-background),
-      #0f151c 55%,
-      #0a0e12
+      var(--atmosphere-gradient-mid) 55%,
+      var(--atmosphere-gradient-end)
     );
   font-synthesis: none;
   text-rendering: optimizeLegibility;

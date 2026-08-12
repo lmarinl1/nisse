@@ -54,23 +54,39 @@ tokens/
 
 # Color Tokens
 
+Los tokens de color son **semánticos** y tienen **dos atmósferas** (dark / light)
+resueltas con `data-theme` en el documento. Los componentes consumen solo el
+nombre semántico; nunca eligen hex por modo.
+
+Implementación: `frontend/src/shared/tokens/tokens.css`.
+
 ## Workspace
 
 ``` yaml
-color.workspace.background
-color.workspace.surface
-color.workspace.panel
-color.workspace.canvas
+color.workspace.background   # dark #0c1014 · light #f3eee6
+color.workspace.surface      # dark #141a21 · light #faf6ef
+color.workspace.panel        # dark #1a222c · light #fffdf8
+color.workspace.canvas       # dark #10161d · light #ebe4da
 ```
 
 ## Investigación
 
 ``` yaml
-color.discovery.primary
-color.discovery.secondary
+color.discovery.primary      # dark #e8c547 · light #c9a227
+color.discovery.secondary    # dark #c9a227 · light #a8861f
 color.research.active
 color.research.idle
 ```
+
+## Preferencia de apariencia
+
+``` yaml
+theme.preference: light | dark | system   # Profile.theme_preference
+theme.resolved: light | dark              # data-theme en html
+```
+
+Default de producto: `dark` (preserva el laboratorio actual).
+`system` sigue `prefers-color-scheme` del dispositivo.
 
 ## Brand mark (logo)
 

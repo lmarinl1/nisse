@@ -10,6 +10,7 @@ import {
 import { AuthProvider } from '../features/identity/AuthContext'
 import { AuthScreen } from '../features/identity/AuthScreen'
 import { SettingsScreen } from '../features/identity/SettingsScreen'
+import { ThemeProvider } from '../features/identity/ThemeContext'
 import { StudyHome } from '../features/study/StudyHome'
 import {
   PriorKnowledgeRedirect,
@@ -72,7 +73,9 @@ const router = createBrowserRouter([
 export function AppRouter() {
   return (
     <AuthProvider>
-      <RouterProvider router={router} />
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </AuthProvider>
   )
 }

@@ -23,6 +23,15 @@
   pointer-events: none;
 }
 
+[data-theme="light"] .auth-screen__vignette {
+  background: radial-gradient(
+    ellipse 50% 60% at 50% 40%,
+    color-mix(in srgb, var(--color-workspace-background) 28%, transparent) 0%,
+    color-mix(in srgb, var(--color-workspace-background) 8%, transparent) 50%,
+    transparent 75%
+  );
+}
+
 .auth-screen__content {
   position: relative;
   z-index: 1;

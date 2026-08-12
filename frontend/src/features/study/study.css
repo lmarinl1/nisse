@@ -28,6 +28,21 @@
     );
 }
 
+[data-theme="light"] .study-home__vignette {
+  background:
+    radial-gradient(
+      ellipse 50% 45% at 20% 36%,
+      color-mix(in srgb, var(--color-workspace-background) 22%, transparent),
+      transparent 70%
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-workspace-background) 28%, transparent) 0%,
+      color-mix(in srgb, var(--color-workspace-background) 8%, transparent) 34%,
+      transparent 58%
+    );
+}
+
 .study-home__content {
   position: relative;
   z-index: 1;

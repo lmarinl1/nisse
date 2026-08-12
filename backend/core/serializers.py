@@ -40,6 +40,10 @@ class ProfileSerializer(serializers.ModelSerializer):
     country_code = serializers.CharField(required=True, allow_blank=False, max_length=8)
     phone = serializers.CharField(required=True, allow_blank=False, max_length=32)
     display_name = serializers.CharField(read_only=True)
+    theme_preference = serializers.ChoiceField(
+        choices=Profile.ThemePreference.choices,
+        required=False,
+    )
 
     class Meta:
         model = Profile
@@ -53,6 +57,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             "country_code",
             "phone",
             "display_name",
+            "theme_preference",
             "created_at",
             "updated_at",
         ]
@@ -60,6 +65,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         user = instance.user
+        theme = getattr(instance, "theme_preference", None) or Profile.ThemePreference.DARK
         return {
             "id": str(instance.pk),
             "username": user.get_username(),
@@ -70,9 +76,18 @@ class ProfileSerializer(serializers.ModelSerializer):
             "country_code": instance.country_code or "",
             "phone": instance.phone or "",
             "display_name": instance.display_name or "",
+            "theme_preference": theme,
             "created_at": instance.created_at.isoformat().replace("+00:00", "Z"),
             "updated_at": instance.updated_at.isoformat().replace("+00:00", "Z"),
         }
+
+    def validate_theme_preference(self, value: str) -> str:
+        allowed = {c.value for c in Profile.ThemePreference}
+        if value not in allowed:
+            raise serializers.ValidationError(
+                "La preferencia de tema debe ser light, dark o system."
+            )
+        return value
 
     def validate_first_name(self, value: str) -> str:
         name = (value or "").strip()

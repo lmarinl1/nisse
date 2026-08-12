@@ -15,6 +15,7 @@ import {
   setToken,
   updateProfileMe,
   type Profile,
+  type ProfileThemeUpdate,
   type ProfileUpdateInput,
 } from '../../shared/api/client'
 
@@ -25,7 +26,9 @@ type AuthState = {
   login: (username: string, password: string) => Promise<void>
   register: (username: string, password: string) => Promise<void>
   logout: () => Promise<void>
-  updateProfile: (input: ProfileUpdateInput) => Promise<Profile>
+  updateProfile: (
+    input: ProfileUpdateInput | ProfileThemeUpdate,
+  ) => Promise<Profile>
   refreshProfile: () => Promise<void>
 }
 
@@ -95,12 +98,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setProfileError(null)
   }, [])
 
-  const updateProfile = useCallback(async (input: ProfileUpdateInput) => {
-    const updated = await updateProfileMe(input)
-    setProfile(updated)
-    setProfileError(null)
-    return updated
-  }, [])
+  const updateProfile = useCallback(
+    async (input: ProfileUpdateInput | ProfileThemeUpdate) => {
+      const updated = await updateProfileMe(input)
+      setProfile(updated)
+      setProfileError(null)
+      return updated
+    },
+    [],
+  )
 
   return (
     <AuthContext.Provider

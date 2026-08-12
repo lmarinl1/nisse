@@ -66,6 +66,40 @@ class IdentityAndStudyApiTests(APITestCase):
         self.assertIn("role_title", body)
         self.assertIn("country_code", body)
         self.assertIn("phone", body)
+        self.assertEqual(body["theme_preference"], "dark")
+
+    def test_patch_profile_me_updates_theme_preference(self):
+        self._auth(self.token)
+        response = self.client.patch(
+            "/api/profile/me/",
+            {"theme_preference": "light"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["theme_preference"], "light")
+        own = Profile.objects.get(user=self.user)
+        self.assertEqual(own.theme_preference, "light")
+
+        system = self.client.patch(
+            "/api/profile/me/",
+            {"theme_preference": "system"},
+            format="json",
+        )
+        self.assertEqual(system.status_code, 200)
+        self.assertEqual(system.json()["theme_preference"], "system")
+
+    def test_patch_profile_me_rejects_invalid_theme_preference(self):
+        self._auth(self.token)
+        before = Profile.objects.get(user=self.user).theme_preference
+        response = self.client.patch(
+            "/api/profile/me/",
+            {"theme_preference": "neon"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("theme_preference", response.json())
+        own = Profile.objects.get(user=self.user)
+        self.assertEqual(own.theme_preference, before)
 
     def test_patch_profile_me_updates_own_fields(self):
         self._auth(self.token)

@@ -26,5 +26,5 @@ Para profundidad en un chat, cita el archivo con `@docs/ux-framework/...`.
 | `09-motion-language.md` | Motion |
 | `10-iconography.md` | Iconografía (UI) |
 | `11-copywriting.md` | Copy |
-| `12-react-architecture.md` | Arquitectura React |
+| `12-react-architecture.md` | Arquitectura React (features reales + React Flow en derivaciones) |
 | `13-brand-mark.md` | Logo / brand mark (telescopio) |

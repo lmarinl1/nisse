@@ -10,6 +10,8 @@ export type HealthResponse = {
   api_version: string
 }
 
+export type ThemePreference = 'light' | 'dark' | 'system'
+
 export type Profile = {
   id: string
   username: string
@@ -20,6 +22,7 @@ export type Profile = {
   country_code: string
   phone: string
   display_name: string
+  theme_preference: ThemePreference
   created_at: string
   updated_at: string
 }
@@ -32,6 +35,11 @@ export type ProfileUpdateInput = {
   role_title: string
   country_code: string
   phone: string
+  theme_preference?: ThemePreference
+}
+
+export type ProfileThemeUpdate = {
+  theme_preference: ThemePreference
 }
 
 export type ApiFieldErrors = Record<string, string[]>
@@ -155,7 +163,7 @@ export class ProfileUpdateError extends Error {
 }
 
 export async function updateProfileMe(
-  input: ProfileUpdateInput,
+  input: ProfileUpdateInput | ProfileThemeUpdate,
 ): Promise<Profile> {
   const headers = new Headers({ 'Content-Type': 'application/json' })
   const token = getToken()

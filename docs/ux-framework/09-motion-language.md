@@ -241,6 +241,35 @@ Toda animación debe poder reducirse.
 
 ------------------------------------------------------------------------
 
+# Atmósfera de entrada (motion)
+
+El fondo animado de Auth y Campo comunica **emergencia de relaciones**, no
+decoración espacial genérica.
+
+## Dark (orbital)
+
+-   Órbitas lentas; aristas que aparecen y se desvanecen.
+-   Núcleo discovery como presencia, no como marketing glow.
+
+## Light (campo de exploración)
+
+-   Partículas discovery yellow (`--color-discovery-primary`, mismo acento
+    que CTAs como Nueva pregunta) con vida (fade in/out).
+-   Aristas locales incompletas + ramificaciones 1-hop que se disuelven.
+-   Cursor: atracción leve + spawn rate-limited de conexiones cercanas.
+-   Sin órbitas, sin nube central, sin bloom fuerte.
+-   No usar brand neon (`#D7FF2F`) en este campo; ese token es del mark.
+
+## Reduced motion
+
+Si `prefers-reduced-motion: reduce`:
+
+-   Congelar el campo (partículas/aristas estáticas incompletas).
+-   No loop de conexión continuo.
+-   No spawn por cursor.
+
+------------------------------------------------------------------------
+
 # Reglas para Cursor
 
 Animar únicamente cuando:

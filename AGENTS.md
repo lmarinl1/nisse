@@ -28,9 +28,12 @@ Artifacts live under `openspec/changes/<name>/` (proposal, design, tasks, delta 
 |------|--------|
 | Shell | WSL2 Ubuntu-24.04 |
 | Backend | Django 5.2 + DRF + django-mongodb-backend |
+| Documents | MongoDB |
+| Graph | Neo4j 5 (Derivaciones del tiempo; Compose + Python driver) |
 | Frontend | React 19 + TypeScript + Vite |
-| DB | MongoDB (`docker-compose up -d` or Atlas URI) |
+| Graph canvas | React Flow (`@xyflow/react`) |
 | Specs | OpenSpec |
+| Tech docs | `docs/architecture/` |
 
 ## Good practices (always)
 
@@ -44,6 +47,7 @@ Artifacts live under `openspec/changes/<name>/` (proposal, design, tasks, delta 
 - UX: follow `.cursor/rules/nisse-*.mdc`; full Design Language in `docs/ux-framework/`
 - Icons: only `frontend/src/shared/icons` (see `docs/ux-framework/10-iconography.md`)
 - Brand mark / logo: `frontend/public/brand` + `NisseMark` (`docs/ux-framework/13-brand-mark.md`)
+- Dual-store: browser → Django only; never wire the SPA directly to Neo4j
 
 ## Commands (WSL)
 
@@ -51,7 +55,7 @@ Artifacts live under `openspec/changes/<name>/` (proposal, design, tasks, delta 
 cd "/mnt/c/Users/lmari/OneDrive/Escritorio/Maestría/Codigo/nisse"
 . "$HOME/.nvm/nvm.sh"
 
-# MongoDB
+# MongoDB + Neo4j
 docker-compose up -d
 
 # Backend
@@ -67,3 +71,5 @@ cp -n .env.example .env
 npm install
 npm run dev
 ```
+
+Neo4j local: Bolt `bolt://localhost:7687`, Browser http://localhost:7474/ — env names in `backend/.env.example` (`NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD`). See `docs/architecture/neo4j-compose.md`.

@@ -8,6 +8,11 @@ from django.db import transaction
 class Profile(models.Model):
     """Product identity for an authenticated Diseñador de Futuros."""
 
+    class ThemePreference(models.TextChoices):
+        LIGHT = "light", "Light"
+        DARK = "dark", "Dark"
+        SYSTEM = "system", "System"
+
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -20,6 +25,11 @@ class Profile(models.Model):
     phone = models.CharField(max_length=32, blank=True, default="")
     # Convenience display; prefer first_name for chrome. Kept for older clients.
     display_name = models.CharField(max_length=150, blank=True)
+    theme_preference = models.CharField(
+        max_length=16,
+        choices=ThemePreference.choices,
+        default=ThemePreference.DARK,
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -24,7 +24,7 @@ Todo comando/script/instrucción de terminal: **WSL2** (`Ubuntu-24.04`). Ver `ni
 
 ## Stack
 
-`backend/`: Django 5.2 + DRF + MongoDB. `frontend/`: React 19 + Vite + TS. Mongo: `docker-compose up -d` (desde WSL; no `docker compose`).
+`backend/`: Django 5.2 + DRF + MongoDB + Neo4j (grafo). `frontend/`: React 19 + Vite + TS + `@xyflow/react`. Compose: `docker-compose up -d` levanta **mongo y neo4j** (desde WSL; no `docker compose`). Detalle: `docs/architecture/`.
 
 ## UX framework
 

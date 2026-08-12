@@ -28,43 +28,52 @@ Objetos Cognitivos y Exploración.
 
 # Stack recomendado
 
--   React
+### En uso en el monorepo
+
+-   React 19
 -   TypeScript
 -   Vite
--   TailwindCSS
 -   React Router
+-   React Flow (`@xyflow/react`) — canvas de **Derivaciones del tiempo**
+-   Radix UI (select / popover) donde ya está cableado
+
+### Aspiracional / aún no en `frontend/package.json`
+
+-   TailwindCSS
 -   TanStack Query
 -   Zustand
 -   Framer Motion
--   React Flow (grafos)
 -   TipTap (editor)
+
+No documentes una librería como “instalada” si no aparece en `package.json`. Para el grafo de derivaciones, React Flow **sí** está adoptado: ver `docs/architecture/react-flow-canvases.md`.
 
 ------------------------------------------------------------------------
 
 # Estructura
 
+Árbol orientativo alineado con el código actual (feature-first):
+
 ``` text
 src/
 ├── app/
 ├── features/
-│   ├── workspace/
-│   ├── canvas/
-│   ├── companion/
-│   ├── scenarios/
-│   ├── hypotheses/
-│   ├── evidence/
-│   └── timeline/
+│   ├── identity/           # auth, perfil, settings
+│   ├── study/              # biblioteca / home de Study
+│   ├── workspace/          # shell Study + nav de sesiones
+│   ├── case-framework/     # marco del objeto de estudio
+│   ├── timelines/          # líneas de tiempo + recalls
+│   ├── time-derivations/   # grafo React Flow → Neo4j vía API
+│   ├── atmosphere/         # atmósfera theme-aware (orbital dark / exploration light)
+│   └── canvas/             # WorkspaceCanvas base / placeholders
 ├── shared/
-│   ├── components/
-│   ├── hooks/
-│   ├── tokens/
-│   ├── utils/
-│   ├── icons/          # iconos UI (line set)
-│   └── brand/          # NisseMark (logo); assets en public/brand/
-├── layouts/
+│   ├── ui/
+│   ├── icons/              # iconos UI (line set)
+│   └── brand/              # NisseMark (logo); assets en public/brand/
 ├── routes/
-└── styles/
+└── (styles / index.css)
 ```
+
+Sesiones del sidebar aún sin módulo dedicado: ver `docs/architecture/research-sessions.md`.
 
 ------------------------------------------------------------------------
 

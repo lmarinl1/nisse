@@ -1,7 +1,8 @@
 ## Purpose
 
-Nisse is a monorepo that delivers a Django REST API backed by MongoDB and a
-React (Vite + TypeScript) client. OpenSpec is the source of truth for behavior
+Nisse is a monorepo that delivers a Django REST API using MongoDB for
+documents and Neo4j for the Derivaciones del tiempo graph, plus a React
+(Vite + TypeScript) client. OpenSpec is the source of truth for behavior
 changes across both packages.
 
 ## Requirements

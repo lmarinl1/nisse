@@ -5,7 +5,7 @@
 > Un framework de experiencia de usuario para construir aplicaciones de
 > investigación, diseño de futuros e inteligencia aumentada.
 
-Monorepo con **backend Django** (MongoDB), **frontend React** (Vite + TypeScript) y **OpenSpec** para desarrollo dirigido por especificaciones.
+Monorepo con **backend Django** (MongoDB + Neo4j), **frontend React** (Vite + TypeScript + React Flow), y **OpenSpec** para desarrollo dirigido por especificaciones.
 
 ------------------------------------------------------------------------
 
@@ -58,11 +58,13 @@ Cada decisión de UX debe favorecer:
 
 ```text
 nisse/
-├── backend/              # Django 5.2 + DRF + django-mongodb-backend
-├── frontend/             # React 19 + TypeScript + Vite
+├── backend/              # Django 5.2 + DRF + MongoDB + Neo4j (grafo)
+├── frontend/             # React 19 + TypeScript + Vite + @xyflow/react
 ├── openspec/             # Specs y changes (OpenSpec)
-├── docs/ux-framework/    # Design Language completo (referencia)
-├── docker-compose.yml
+├── docs/
+│   ├── ux-framework/     # Design Language completo (referencia)
+│   └── architecture/     # Dual-store, Neo4j/Compose, React Flow, sesiones
+├── docker-compose.yml    # MongoDB + Neo4j (local)
 ├── AGENTS.md             # Guías para agentes / equipo
 ├── .venv/                # Entorno Python (local, no se versiona)
 └── .cursor/rules/        # Rules condensadas para Cursor (.mdc)
@@ -82,8 +84,28 @@ Si eres nuevo:
 
 1. `docs/ux-framework/00-philosophy.md`
 2. Visual Language → Workspace Grammar → Components → Patterns (misma carpeta)
+3. Ingeniería / almacenes / sesiones: `docs/architecture/`
 
-Las rules de Cursor son resúmenes accionables; el detalle vive en `docs/ux-framework/`. En un chat, profundiza con `@docs/ux-framework/...`.
+Las rules de Cursor son resúmenes accionables; el detalle de UX vive en `docs/ux-framework/`. En un chat, profundiza con `@docs/ux-framework/...` o `@docs/architecture/...`.
+
+------------------------------------------------------------------------
+
+# Arquitectura de datos (resumen)
+
+- **MongoDB**: documentos (Study, Case Framework, Timelines, Recalls, identidad).
+- **Neo4j**: grafo de **Derivaciones del tiempo** (nodos, aristas, layout).
+- El navegador solo habla con Django (`/api/`); no hay conexión directa a Neo4j desde el cliente.
+
+Detalle: [docs/architecture/dual-store.md](docs/architecture/dual-store.md) · [docs/architecture/neo4j-compose.md](docs/architecture/neo4j-compose.md).
+
+------------------------------------------------------------------------
+
+# Sesiones de investigación (resumen)
+
+En el Study Workspace: marco del caso, líneas de tiempo y derivaciones del tiempo están implementadas; el resto de entradas del sidebar son placeholder hasta su feature.
+
+Mapa id → carpeta / estado: [docs/architecture/research-sessions.md](docs/architecture/research-sessions.md).  
+Canvas de grafo (React Flow): [docs/architecture/react-flow-canvases.md](docs/architecture/react-flow-canvases.md).
 
 ------------------------------------------------------------------------
 
@@ -252,11 +274,13 @@ wsl -d Ubuntu-24.04 -- bash "/mnt/c/Users/lmari/OneDrive/Escritorio/Maestría/Co
 
 Desde una shell WSL en la raíz del repo:
 
-### 1. MongoDB
+### 1. Infra local (MongoDB + Neo4j)
 
 ```bash
 docker-compose up -d
 ```
+
+Levanta **mongo** (`27017`) y **neo4j** (`7474` Browser/HTTP, `7687` Bolt). Detalle: [docs/architecture/neo4j-compose.md](docs/architecture/neo4j-compose.md).
 
 ### 2. Backend
 
@@ -270,6 +294,16 @@ python manage.py runserver
 
 API health: http://127.0.0.1:8000/api/health/
 
+Variables Neo4j en `backend/.env` (ver `backend/.env.example`):
+
+| Variable | Ejemplo local |
+|----------|---------------|
+| `NEO4J_URI` | `bolt://localhost:7687` |
+| `NEO4J_USER` | `neo4j` |
+| `NEO4J_PASSWORD` | `nisse-dev-neo4j` |
+
+(Solo desarrollo; no uses estos valores en producción.)
+
 ### 3. Frontend
 
 ```bash
@@ -280,6 +314,8 @@ npm run dev
 ```
 
 App: http://localhost:5173/
+
+Arquitectura técnica: [docs/architecture/](docs/architecture/).
 
 ## OpenSpec (flujo de trabajo)
 
@@ -309,7 +345,10 @@ Cambios activos: `openspec/changes/`
 |------|------------|
 | Shell | WSL2 (`Ubuntu-24.04`) |
 | API | Django 5.2, Django REST Framework |
-| DB | MongoDB (`django-mongodb-backend`) |
+| Documentos | MongoDB (`django-mongodb-backend`) |
+| Grafo | Neo4j 5 (Compose; driver Python en Django) |
 | UI | React 19, TypeScript, Vite |
+| Canvas de grafo | React Flow (`@xyflow/react`) — Derivaciones del tiempo |
 | Specs | OpenSpec 1.8 |
 | UX | Rules Cursor (`.cursor/rules/nisse-*.mdc`) + docs (`docs/ux-framework/`) |
+| Ingeniería | `docs/architecture/` (dual-store, Compose, sesiones) |

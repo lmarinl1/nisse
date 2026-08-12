@@ -39,6 +39,37 @@ Nunca debe sentirse como:
 
 ------------------------------------------------------------------------
 
+# Atmósferas de entrada (Auth / Campo)
+
+El motif de fondo en login y en la entrada a Objetos de Estudio es
+**theme-aware**. Metáfora de producto:
+
+> NISSE no predice el futuro; explora relaciones que todavía no habíamos visto.
+
+## Dark — red orbital (observatorio)
+
+-   Anillos / órbitas, nodos en movimiento, núcleo/nube discovery.
+-   Acento: discovery yellow de tokens UI.
+-   Lectura: profundidad nocturna, laboratorio-observatorio.
+
+## Light — campo de exploración
+
+-   Sin órbitas, sin estrellas espaciales, sin nube/núcleo denso.
+-   Fondo de papel técnico con partículas sutiles en discovery yellow
+    (`color.discovery.primary` / `--color-discovery-primary` — el mismo
+    amarillo de CTAs como **Nueva pregunta**), que aparecen y desaparecen.
+-   Conexiones efímeras: grafos **incompletos**, ramificaciones breves
+    que se disuelven (nunca un grafo completo estable).
+-   Afinidad sutil al cursor: nodos cercanos reaccionan y pueden revelar
+    conexiones cortas; la capa no captura clics de la UI.
+-   Densidad baja, glow mínimo; sin estética cyberpunk.
+-   Brand neon (`#D7FF2F`) queda para el mark/telescopio, no para esta atmósfera.
+
+Implementación: `frontend/src/features/atmosphere/ResearchNetworkAtmosphere.tsx`
+(`data-theme` → modo `orbital` | `exploration`).
+
+------------------------------------------------------------------------
+
 # Personalidad visual
 
   Atributo                  Nivel
@@ -120,6 +151,22 @@ Fondos ligeramente cálidos.
 
 Mucho contraste tipográfico.
 
+Valores canónicos (tokens CSS):
+
+| Token | Light |
+| --- | --- |
+| workspace.background | `#f3eee6` |
+| workspace.surface | `#faf6ef` |
+| workspace.panel | `#fffdf8` |
+| workspace.canvas | `#ebe4da` |
+| text.primary | `#1a222c` |
+| text.secondary | `#5c6675` |
+| text.muted | `#7a8494` |
+| discovery.primary | `#c9a227` |
+| discovery.secondary | `#a8861f` |
+
+Atmósfera: lavados cálidos (marfil / discovery a baja opacidad). Sin wash azul-frío del dark.
+
 ------------------------------------------------------------------------
 
 # Modo Dark
@@ -131,6 +178,24 @@ Nunca utilizar negro puro.
 Usar capas.
 
 Las superficies deben diferenciarse mediante elevación y brillo.
+
+Valores canónicos (tokens CSS — atmósfera por defecto / observatorio):
+
+| Token | Dark |
+| --- | --- |
+| workspace.background | `#0c1014` |
+| workspace.surface | `#141a21` |
+| workspace.panel | `#1a222c` |
+| workspace.canvas | `#10161d` |
+| text.primary | `#e8edf2` |
+| text.secondary | `#9aa5b5` |
+| text.muted | `#6b7585` |
+| discovery.primary | `#e8c547` |
+| discovery.secondary | `#c9a227` |
+
+Preferencia de usuario (`theme_preference`): `light` | `dark` | `system`.
+`system` resuelve vía `prefers-color-scheme`. Default de producto: `dark`.
+Aplicación: `data-theme="light|dark"` en `document.documentElement`.
 
 ------------------------------------------------------------------------
 
