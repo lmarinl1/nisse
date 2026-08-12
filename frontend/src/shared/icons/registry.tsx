@@ -258,6 +258,10 @@ function SunIcon() {
   return (<><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></>);
 }
 
+function TagIcon() {
+  return (<><path d="M12 3H4v8l9 9 8-8z"/><circle cx="7.5" cy="7.5" r="1.5"/></>);
+}
+
 function TelescopeIcon() {
   return (<><path d="m6 15 10-6 3 5-10 6z"/><path d="m16 9 2-2 3 5-2 2M6 15l-3 1 2 3 4-1"/></>);
 }
@@ -348,6 +352,7 @@ export const icons = {
   "route": RouteIcon,
   "signal": SignalIcon,
   "sun": SunIcon,
+  "tag": TagIcon,
   "telescope": TelescopeIcon,
   "timeline-clock": TimelineClockIcon,
   "timer": TimerIcon,

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import {
   createCollapse,
   createRecall,
@@ -20,7 +20,11 @@ import {
 } from '../../shared/ui'
 import { timelinesPath } from '../workspace/researchSessions'
 import { GUIDING_QUESTIONS, RECALL_CLASSIFICATION_LABELS } from './classifications'
-import { formatYear } from './temporalFormat'
+import {
+  formatYear,
+  parseOptionalDay,
+  parseOptionalMonth,
+} from './temporalFormat'
 import { RecallDrawer } from './RecallDrawer'
 import { TimelineCollapseDialog } from './TimelineCollapseDialog'
 import { TimelineDrawer } from './TimelineDrawer'
@@ -36,6 +40,8 @@ type CreateRecallState = {
   title: string
   description: string
   yearText: string
+  monthText: string
+  dayText: string
   isBce: boolean
   classification: Recall['classification']
 }
@@ -44,12 +50,15 @@ const emptyCreate: CreateRecallState = {
   title: '',
   description: '',
   yearText: String(new Date().getFullYear()),
+  monthText: '',
+  dayText: '',
   isBce: false,
   classification: 'verified',
 }
 
 export function TimelineCanvas({ studyId, timelineId }: Props) {
   const navigate = useNavigate()
+  const location = useLocation()
   const [timeline, setTimeline] = useState<Timeline | null>(null)
   const [recalls, setRecalls] = useState<Recall[]>([])
   const [allTimelines, setAllTimelines] = useState<Timeline[]>([])
@@ -92,6 +101,20 @@ export function TimelineCanvas({ studyId, timelineId }: Props) {
     }
   }, [reload])
 
+  useEffect(() => {
+    const state = location.state as { recallId?: string } | null
+    const recallId = state?.recallId
+    if (!recallId || recalls.length === 0) {
+      return
+    }
+    const found = recalls.find((r) => r.id === recallId)
+    if (!found) {
+      return
+    }
+    setSelected(found)
+    navigate(location.pathname, { replace: true, state: {} })
+  }, [recalls, location.state, location.pathname, navigate])
+
   const namesById = useMemo(() => {
     const map: Record<string, string> = {}
     for (const t of allTimelines) {
@@ -122,6 +145,16 @@ export function TimelineCanvas({ studyId, timelineId }: Props) {
       setError('Nombre y año válidos son obligatorios.')
       return
     }
+    const month = parseOptionalMonth(createForm.monthText)
+    const day = parseOptionalDay(createForm.dayText)
+    if (month.error || day.error) {
+      setError(month.error ?? day.error)
+      return
+    }
+    if (day.value != null && month.value == null) {
+      setError('Indica el mes si especificas el día.')
+      return
+    }
     const year = createForm.isBce ? -Math.abs(yearRaw) : Math.abs(yearRaw)
     setPending(true)
     try {
@@ -130,6 +163,8 @@ export function TimelineCanvas({ studyId, timelineId }: Props) {
         description_markdown: createForm.description.trim() || '—',
         classification: createForm.classification,
         temporal_year: year,
+        temporal_month: month.value,
+        temporal_day: day.value,
       })
       setRecalls((prev) =>
         [...prev, created].sort((a, b) => a.sort_key - b.sort_key),
@@ -340,6 +375,28 @@ export function TimelineCanvas({ studyId, timelineId }: Props) {
           />
           Antes de Cristo (a.C.)
         </label>
+        <FormField label="Mes" htmlFor="new-recall-month" optional>
+          <input
+            id="new-recall-month"
+            value={createForm.monthText}
+            onChange={(e) =>
+              setCreateForm((f) => ({ ...f, monthText: e.target.value }))
+            }
+            inputMode="numeric"
+            placeholder="1–12"
+          />
+        </FormField>
+        <FormField label="Día" htmlFor="new-recall-day" optional>
+          <input
+            id="new-recall-day"
+            value={createForm.dayText}
+            onChange={(e) =>
+              setCreateForm((f) => ({ ...f, dayText: e.target.value }))
+            }
+            inputMode="numeric"
+            placeholder="1–31"
+          />
+        </FormField>
       </ResearchDrawer>
     </div>
   )

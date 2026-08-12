@@ -257,6 +257,11 @@ En producto, el instrumento compartido es `ResearchDrawer`
 -   brand mark con estrellas en el header
 -   CTA Guardar/Crear/Actualizar con `btn-discovery`
 -   Select accesible: `ResearchSelect` (Radix + tokens NISSE)
+-   **Chip Selector multi-respuesta:** `ResearchChipSelector` — chips con
+    label + icono del set oficial (`shared/icons`, tamaño de letra); borde
+    Discovery Yellow cuando está seleccionado; teclado (`aria-pressed`).
+    Usar cuando el campo admite **cero o más** valores (p. ej. Tipos de
+    deriva), no como reemplazo de `ResearchSelect` de valor único.
 
 El Canvas debe permanecer parcialmente visible; preferir Drawer antes que Modal.
 

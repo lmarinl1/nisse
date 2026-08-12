@@ -62,6 +62,7 @@ export {
   ShieldIcon,
   SignalIcon,
   SunIcon,
+  TagIcon,
   TelescopeIcon,
   TimelineClockIcon,
   TimelineIcon,

@@ -1,5 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
+  createCollapse,
   createMoment,
   deleteMoment,
   updateRecall,
@@ -14,13 +16,17 @@ import {
   ResearchSelect,
 } from '../../shared/ui'
 import { MarkdownResearchEditor } from '../case-framework/MarkdownResearchEditor'
+import { timelinePath } from '../workspace/researchSessions'
 import { RecallClassificationBadge } from './badges'
 import {
   RECALL_CLASSIFICATION_LABELS,
   type RecallClassification,
 } from './classifications'
+import { RecallRelationCarousel } from './RecallRelationCarousel'
 import {
   formatTemporalDate,
+  parseOptionalDay,
+  parseOptionalMonth,
   parseYearInput,
   yearToInput,
 } from './temporalFormat'
@@ -46,25 +52,29 @@ const CLASSIFICATION_OPTIONS = (
 export function RecallDrawer({
   open,
   studyId,
-  timelineId: _timelineId,
+  timelineId,
   recall,
   timelineNamesById,
   onClose,
   onSaved,
   onRequestCollapse,
 }: Props) {
+  const navigate = useNavigate()
   const [title, setTitle] = useState('')
   const [location, setLocation] = useState('')
   const [description, setDescription] = useState('')
   const [classification, setClassification] =
     useState<RecallClassification>('verified')
   const [yearText, setYearText] = useState('')
+  const [monthText, setMonthText] = useState('')
+  const [dayText, setDayText] = useState('')
   const [isBce, setIsBce] = useState(false)
   const [moments, setMoments] = useState<Moment[]>([])
   const [momentTitle, setMomentTitle] = useState('')
   const [momentContent, setMomentContent] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
+  const [relationPending, setRelationPending] = useState(false)
 
   useEffect(() => {
     if (!open || !recall) {
@@ -77,6 +87,10 @@ export function RecallDrawer({
     const y = yearToInput(recall.temporal_year)
     setYearText(String(y.year))
     setIsBce(y.isBce)
+    setMonthText(
+      recall.temporal_month != null ? String(recall.temporal_month) : '',
+    )
+    setDayText(recall.temporal_day != null ? String(recall.temporal_day) : '')
     setMoments(recall.moments)
     setError(null)
   }, [open, recall])
@@ -98,8 +112,18 @@ export function RecallDrawer({
   async function handleSave(event: FormEvent) {
     event.preventDefault()
     const year = parseYearInput(yearText, isBce)
+    const month = parseOptionalMonth(monthText)
+    const day = parseOptionalDay(dayText)
     if (year == null || !title.trim() || !description.trim()) {
       setError('Nombre, fecha y descripción son obligatorios.')
+      return
+    }
+    if (month.error || day.error) {
+      setError(month.error ?? day.error)
+      return
+    }
+    if (day.value != null && month.value == null) {
+      setError('Indica el mes si especificas el día.')
       return
     }
     setPending(true)
@@ -111,8 +135,8 @@ export function RecallDrawer({
         description_markdown: description,
         classification,
         temporal_year: year,
-        temporal_month: activeRecall.temporal_month,
-        temporal_day: activeRecall.temporal_day,
+        temporal_month: month.value,
+        temporal_day: day.value,
       }
       const updated = await updateRecall(studyId, activeRecall.id, input)
       onSaved(updated)
@@ -149,9 +173,52 @@ export function RecallDrawer({
     onSaved({ ...activeRecall, moments: next })
   }
 
-  const connectedNames = activeRecall.timeline_ids.map(
-    (id) => timelineNamesById[id] ?? id,
-  )
+  async function handleRemoveTimeline(timelineIdToRemove: string) {
+    if (timelineIdToRemove === activeRecall.home_timeline_id) {
+      return
+    }
+    setRelationPending(true)
+    setError(null)
+    try {
+      const nextIds = activeRecall.timeline_ids.filter(
+        (id) => id !== timelineIdToRemove,
+      )
+      const updated = await createCollapse(studyId, activeRecall.id, nextIds)
+      onSaved(updated)
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'No pudimos quitar la conexión.',
+      )
+    } finally {
+      setRelationPending(false)
+    }
+  }
+
+  const relationCards = activeRecall.timeline_ids.map((id) => {
+    const isHome = id === activeRecall.home_timeline_id
+    return {
+      id,
+      title: timelineNamesById[id] ?? id,
+      timelineName: isHome ? 'Línea hogar' : 'Línea conectada',
+      badge: isHome ? 'Hogar' : undefined,
+      onOpen: () => {
+        if (id === timelineId) {
+          return
+        }
+        navigate(timelinePath(studyId, id), {
+          state: { recallId: activeRecall.id },
+        })
+      },
+      onRemove:
+        !isHome && !relationPending
+          ? () => {
+              void handleRemoveTimeline(id)
+            }
+          : undefined,
+    }
+  })
 
   return (
     <ResearchDrawer
@@ -169,12 +236,6 @@ export function RecallDrawer({
           <RecallClassificationBadge
             classification={activeRecall.classification}
           />
-          {activeRecall.is_collapse ? (
-            <>
-              <br />
-              Este recuerdo conecta: {connectedNames.join(' · ')}
-            </>
-          ) : null}
         </>
       }
       footer={
@@ -188,7 +249,7 @@ export function RecallDrawer({
             {pending ? 'Guardando…' : 'Guardar cambios'}
           </button>
           <button type="button" className="ghost" onClick={onRequestCollapse}>
-            Conectar con otras líneas de tiempo
+            Conectar líneas
           </button>
         </>
       }
@@ -239,6 +300,24 @@ export function RecallDrawer({
           />
           Antes de Cristo (a.C.)
         </label>
+        <FormField label="Mes" htmlFor="recall-month" optional>
+          <input
+            id="recall-month"
+            value={monthText}
+            onChange={(e) => setMonthText(e.target.value)}
+            inputMode="numeric"
+            placeholder="1–12"
+          />
+        </FormField>
+        <FormField label="Día" htmlFor="recall-day" optional>
+          <input
+            id="recall-day"
+            value={dayText}
+            onChange={(e) => setDayText(e.target.value)}
+            inputMode="numeric"
+            placeholder="1–31"
+          />
+        </FormField>
         <div className="research-drawer__section">
           <p className="research-drawer__section-title">Narrativa</p>
           <MarkdownResearchEditor
@@ -252,6 +331,22 @@ export function RecallDrawer({
         </div>
         {error ? <p className="form-error">{error}</p> : null}
       </form>
+
+      <RecallRelationCarousel
+        label="Líneas conectadas"
+        cards={relationCards}
+        emptyHint="Solo está en su línea hogar. Conecta otras líneas para un colapso."
+        actions={
+          <button
+            type="button"
+            className="ghost"
+            disabled={relationPending}
+            onClick={onRequestCollapse}
+          >
+            Agregar línea
+          </button>
+        }
+      />
 
       <section>
         <h3>Momentos</h3>

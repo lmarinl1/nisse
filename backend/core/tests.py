@@ -585,9 +585,7 @@ class DerivationGraphApiTests(APITestCase):
             f"/api/studies/{study_id}/derivations/nodes/",
             {
                 "name": "Cyberpunk",
-                "derivation_type": "art_movement",
-                "impact": "high",
-                "is_speculative": True,
+                "type_ids": ["process", "future"],
                 "source_node_id": root_id,
                 "position_x": 200,
                 "position_y": 80,
@@ -597,6 +595,12 @@ class DerivationGraphApiTests(APITestCase):
         self.assertEqual(created.status_code, 201)
         node_id = created.json()["id"]
         self.assertIn("created_edge", created.json())
+        self.assertEqual(
+            [t["id"] for t in created.json()["derivation_types"]],
+            ["process", "future"],
+        )
+        self.assertNotIn("impact", created.json())
+        self.assertNotIn("is_speculative", created.json())
 
         moved = self.client.patch(
             f"/api/studies/{study_id}/derivations/nodes/{node_id}/",
@@ -608,7 +612,12 @@ class DerivationGraphApiTests(APITestCase):
 
         second = self.client.post(
             f"/api/studies/{study_id}/derivations/nodes/",
-            {"name": "Posthumano", "position_x": 40, "position_y": 200},
+            {
+                "name": "Posthumano",
+                "type_ids": ["thing"],
+                "position_x": 40,
+                "position_y": 200,
+            },
             format="json",
         )
         self.assertEqual(second.status_code, 201)
@@ -656,3 +665,62 @@ class DerivationGraphApiTests(APITestCase):
         graph = self.client.get(f"/api/studies/{study_id}/derivations/").json()
         root = next(n for n in graph["nodes"] if n["kind"] == "root")
         self.assertEqual(root["name"], "Nombre nuevo")
+
+    def test_tags_persist_on_derivation(self):
+        study_id = self._create_study("Tags study")
+        created = self.client.post(
+            f"/api/studies/{study_id}/derivations/nodes/",
+            {
+                "name": "Señal",
+                "type_ids": ["focus"],
+                "tags": ["señal débil", "  señal débil  ", ""],
+            },
+            format="json",
+        )
+        self.assertEqual(created.status_code, 201)
+        self.assertEqual(created.json()["tags"], ["señal débil"])
+        node_id = created.json()["id"]
+
+        patched = self.client.patch(
+            f"/api/studies/{study_id}/derivations/nodes/{node_id}/",
+            {"tags": ["señal débil", "arte"]},
+            format="json",
+        )
+        self.assertEqual(patched.status_code, 200)
+        self.assertEqual(patched.json()["tags"], ["señal débil", "arte"])
+
+        graph = self.client.get(f"/api/studies/{study_id}/derivations/").json()
+        node = next(n for n in graph["nodes"] if n["id"] == node_id)
+        self.assertEqual(node["tags"], ["señal débil", "arte"])
+
+    def test_derivation_types_catalog_and_multi_type_required(self):
+        study_id = self._create_study("Tipos study")
+        catalog = self.client.get(f"/api/studies/{study_id}/derivations/types/")
+        self.assertEqual(catalog.status_code, 200)
+        ids = [t["id"] for t in catalog.json()]
+        self.assertIn("process", ids)
+        self.assertIn("future", ids)
+        self.assertEqual(len(ids), 18)
+        sample = next(t for t in catalog.json() if t["id"] == "process")
+        self.assertIn("inspiration", sample)
+        self.assertIn("reference", sample)
+        self.assertIn("prompt", sample)
+
+        rejected = self.client.post(
+            f"/api/studies/{study_id}/derivations/nodes/",
+            {"name": "Sin tipos", "type_ids": []},
+            format="json",
+        )
+        self.assertEqual(rejected.status_code, 400)
+
+        created = self.client.post(
+            f"/api/studies/{study_id}/derivations/nodes/",
+            {"name": "Con tipos", "type_ids": ["process", "defocus", "process"]},
+            format="json",
+        )
+        self.assertEqual(created.status_code, 201)
+        self.assertEqual(created.json()["type_ids"], ["process", "defocus"])
+        self.assertEqual(len(created.json()["derivation_types"]), 2)
+        self.assertTrue(
+            all("prompt" in t for t in created.json()["derivation_types"])
+        )

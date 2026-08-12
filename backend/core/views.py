@@ -551,6 +551,18 @@ class StudyRecallListView(APIView):
         return Response(payload)
 
 
+class DerivationTypeCatalogView(APIView):
+    """Seeded methodological derivation types (Study-scoped auth gate)."""
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        from .derivation_types_catalog import catalog_as_api_payload
+
+        _owned_study(request, pk)
+        return Response(catalog_as_api_payload())
+
+
 class DerivationGraphView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -590,10 +602,9 @@ class DerivationNodeListCreateView(APIView):
                 str(study.pk),
                 name=data.get("name", ""),
                 description_markdown=data.get("description_markdown", ""),
-                derivation_type=data.get("derivation_type", "other"),
-                impact=data.get("impact", "medium"),
-                is_speculative=bool(data.get("is_speculative", False)),
+                type_ids=data.get("type_ids"),
                 recall_id=recall_id,
+                tags=data.get("tags"),
                 position_x=float(data.get("position_x", 120)),
                 position_y=float(data.get("position_y", 120)),
                 source_node_id=data.get("source_node_id"),

@@ -149,6 +149,8 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
+  /* Confine instrument growth so Canvas scrolls internally, not the page */
+  overflow: hidden;
 }
 
 .workspace__session {

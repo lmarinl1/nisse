@@ -42,14 +42,14 @@ export const RESEARCH_SESSIONS: readonly ResearchSession[] = [
     Icon: DocumentIcon,
   },
   {
-    id: 'time-derivations',
-    label: 'Derivaciones del tiempo',
-    Icon: BranchIcon,
-  },
-  {
     id: 'timelines',
     label: 'Líneas de tiempo',
     Icon: TimelineClockIcon,
+  },
+  {
+    id: 'time-derivations',
+    label: 'Derivaciones del tiempo',
+    Icon: BranchIcon,
   },
   {
     id: 'evolution-forces',

@@ -81,6 +81,11 @@ urlpatterns = [
         name="study-derivations-graph",
     ),
     path(
+        "studies/<str:pk>/derivations/types/",
+        views.DerivationTypeCatalogView.as_view(),
+        name="study-derivations-types",
+    ),
+    path(
         "studies/<str:pk>/derivations/nodes/",
         views.DerivationNodeListCreateView.as_view(),
         name="study-derivations-nodes",

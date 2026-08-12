@@ -487,6 +487,6 @@ class RecallWriteSerializer(serializers.Serializer):
 class CollapseWriteSerializer(serializers.Serializer):
     timeline_ids = serializers.ListField(
         child=serializers.CharField(),
-        min_length=2,
+        min_length=1,
     )
 

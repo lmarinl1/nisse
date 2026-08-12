@@ -11,28 +11,13 @@ import uuid
 from datetime import datetime, timezone
 from typing import Any
 
+from .derivation_types_catalog import (
+    DERIVATION_TYPE_IDS,
+    resolve_derivation_types,
+)
 from .neo4j_client import get_neo4j_driver
 
 logger = logging.getLogger(__name__)
-
-DERIVATION_TYPES = (
-    "artistic_inspiration",
-    "art_movement",
-    "technology",
-    "concept",
-    "theory",
-    "cultural_phenomenon",
-    "event",
-    "signal",
-    "object",
-    "practice",
-    "institution",
-    "scenario",
-    "speculation",
-    "other",
-)
-
-IMPACT_VALUES = ("low", "medium", "high", "transformative")
 
 RELATIONSHIP_TYPE_DEFAULT = "derives_toward"
 
@@ -191,6 +176,76 @@ def _tx_get_graph(tx, study_id: str) -> dict[str, Any]:
     }
 
 
+def _normalize_tags(raw: Any) -> list[str]:
+    """Validate and normalize tag list (trim, dedupe case-insensitive, soft limits)."""
+    if raw is None:
+        return []
+    if not isinstance(raw, (list, tuple)):
+        raise DerivationError("tags debe ser una lista de textos.")
+    cleaned: list[str] = []
+    seen: set[str] = set()
+    for item in raw:
+        if not isinstance(item, str):
+            raise DerivationError("Cada etiqueta debe ser texto.")
+        tag = item.strip()
+        if not tag:
+            continue
+        if len(tag) > 32:
+            raise DerivationError("Cada etiqueta admite máximo 32 caracteres.")
+        key = tag.casefold()
+        if key in seen:
+            continue
+        seen.add(key)
+        cleaned.append(tag)
+        if len(cleaned) >= 20:
+            break
+    return cleaned
+
+
+def _tags_from_props(props: dict[str, Any]) -> list[str]:
+    raw = props.get("tags")
+    if raw is None:
+        return []
+    if isinstance(raw, list):
+        return [str(t) for t in raw if str(t).strip()]
+    return []
+
+
+def _normalize_type_ids(raw: Any, *, required: bool) -> list[str]:
+    if raw is None:
+        if required:
+            raise DerivationError("Selecciona al menos un tipo de deriva.")
+        return []
+    if isinstance(raw, str):
+        raw = [raw]
+    if not isinstance(raw, (list, tuple)):
+        raise DerivationError("type_ids debe ser una lista de identificadores.")
+    cleaned: list[str] = []
+    seen: set[str] = set()
+    for item in raw:
+        if not isinstance(item, str):
+            raise DerivationError("Cada tipo de deriva debe ser un identificador.")
+        tid = item.strip()
+        if not tid:
+            continue
+        if tid not in DERIVATION_TYPE_IDS:
+            raise DerivationError(f"Tipo de deriva no válido: {tid}.")
+        if tid in seen:
+            continue
+        seen.add(tid)
+        cleaned.append(tid)
+    if required and not cleaned:
+        raise DerivationError("Selecciona al menos un tipo de deriva.")
+    return cleaned
+
+
+def _type_ids_from_props(props: dict[str, Any]) -> list[str]:
+    raw = props.get("type_ids")
+    if isinstance(raw, list):
+        return [str(t) for t in raw if str(t).strip() in DERIVATION_TYPE_IDS]
+    return []
+
+
 def _serialize_node(props: dict[str, Any], kind: str) -> dict[str, Any]:
     base = {
         "id": props["id"],
@@ -202,13 +257,14 @@ def _serialize_node(props: dict[str, Any], kind: str) -> dict[str, Any]:
         "updated_at": props.get("updated_at"),
     }
     if kind == NODE_KIND_DERIVATION:
+        type_ids = _type_ids_from_props(props)
         base.update(
             {
                 "description_markdown": props.get("description_markdown") or "",
-                "derivation_type": props.get("derivation_type") or "other",
-                "impact": props.get("impact") or "medium",
-                "is_speculative": bool(props.get("is_speculative", False)),
+                "type_ids": type_ids,
+                "derivation_types": resolve_derivation_types(type_ids),
                 "recall_id": props.get("recall_id") or None,
+                "tags": _tags_from_props(props),
             }
         )
     return base
@@ -219,20 +275,17 @@ def create_node(
     *,
     name: str,
     description_markdown: str = "",
-    derivation_type: str = "other",
-    impact: str = "medium",
-    is_speculative: bool = False,
+    type_ids: list[str] | None = None,
     recall_id: str | None = None,
+    tags: list[str] | None = None,
     position_x: float = 120.0,
     position_y: float = 120.0,
     source_node_id: str | None = None,
 ) -> dict[str, Any]:
     if not name or not name.strip():
         raise DerivationError("El nombre es obligatorio.")
-    if derivation_type not in DERIVATION_TYPES:
-        raise DerivationError("Tipo de deriva no válido.")
-    if impact not in IMPACT_VALUES:
-        raise DerivationError("Impacto no válido.")
+    normalized_types = _normalize_type_ids(type_ids, required=True)
+    normalized_tags = _normalize_tags(tags if tags is not None else [])
 
     node_id = _new_id("der")
     now = _now_iso()
@@ -244,10 +297,9 @@ def create_node(
             node_id,
             name.strip(),
             description_markdown or "",
-            derivation_type,
-            impact,
-            is_speculative,
+            normalized_types,
             recall_id,
+            normalized_tags,
             float(position_x),
             float(position_y),
             now,
@@ -262,10 +314,9 @@ def _tx_create_node(
     node_id,
     name,
     description_markdown,
-    derivation_type,
-    impact,
-    is_speculative,
+    type_ids,
     recall_id,
+    tags,
     position_x,
     position_y,
     now,
@@ -287,10 +338,9 @@ def _tx_create_node(
           kind: 'derivation',
           name: $name,
           description_markdown: $description_markdown,
-          derivation_type: $derivation_type,
-          impact: $impact,
-          is_speculative: $is_speculative,
+          type_ids: $type_ids,
           recall_id: $recall_id,
+          tags: $tags,
           position_x: $position_x,
           position_y: $position_y,
           created_at: $now,
@@ -301,10 +351,9 @@ def _tx_create_node(
         study_id=study_id,
         name=name,
         description_markdown=description_markdown,
-        derivation_type=derivation_type,
-        impact=impact,
-        is_speculative=is_speculative,
+        type_ids=type_ids,
         recall_id=recall_id,
+        tags=tags,
         position_x=position_x,
         position_y=position_y,
         now=now,
@@ -385,18 +434,19 @@ def _tx_update_node(tx, study_id: str, node_id: str, patch: dict[str, Any]):
         fields["name"] = name
     if "description_markdown" in patch:
         fields["description_markdown"] = patch["description_markdown"] or ""
-    if "derivation_type" in patch:
-        if patch["derivation_type"] not in DERIVATION_TYPES:
-            raise DerivationError("Tipo de deriva no válido.")
-        fields["derivation_type"] = patch["derivation_type"]
-    if "impact" in patch:
-        if patch["impact"] not in IMPACT_VALUES:
-            raise DerivationError("Impacto no válido.")
-        fields["impact"] = patch["impact"]
-    if "is_speculative" in patch:
-        fields["is_speculative"] = bool(patch["is_speculative"])
+    if "type_ids" in patch or "derivation_types" in patch:
+        raw_ids = patch.get("type_ids")
+        if raw_ids is None and "derivation_types" in patch:
+            # Accept list of objects with id from clients that send full payloads.
+            dt = patch.get("derivation_types") or []
+            raw_ids = [
+                item.get("id") if isinstance(item, dict) else item for item in dt
+            ]
+        fields["type_ids"] = _normalize_type_ids(raw_ids, required=True)
     if "recall_id" in patch:
         fields["recall_id"] = patch["recall_id"] or None
+    if "tags" in patch:
+        fields["tags"] = _normalize_tags(patch["tags"])
     if "position_x" in patch:
         fields["position_x"] = float(patch["position_x"])
     if "position_y" in patch:

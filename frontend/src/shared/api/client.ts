@@ -530,6 +530,14 @@ export type DerivationRecallRef = {
   timeline_name: string
 }
 
+export type DerivationMethodologicalType = {
+  id: string
+  name: string
+  inspiration: string
+  reference: string
+  prompt: string
+}
+
 export type DerivationNode = {
   id: string
   kind: DerivationNodeKind
@@ -539,12 +547,12 @@ export type DerivationNode = {
   created_at?: string
   updated_at?: string
   description_markdown?: string
-  derivation_type?: string
-  impact?: string
-  is_speculative?: boolean
+  type_ids?: string[]
+  derivation_types?: DerivationMethodologicalType[]
   recall_id?: string | null
   recall?: DerivationRecallRef | null
   recall_missing?: boolean
+  tags?: string[]
 }
 
 export type DerivationEdge = {
@@ -572,18 +580,26 @@ export type DerivationGraph = {
 export type DerivationNodeInput = {
   name: string
   description_markdown?: string
-  derivation_type?: string
-  impact?: string
-  is_speculative?: boolean
+  type_ids: string[]
   recall_id?: string | null
+  tags?: string[]
   position_x?: number
   position_y?: number
   source_node_id?: string
 }
 
-export type DerivationNodePatch = Partial<DerivationNodeInput> & {
+export type DerivationNodePatch = Partial<Omit<DerivationNodeInput, 'type_ids'>> & {
+  type_ids?: string[]
   position_x?: number
   position_y?: number
+}
+
+export async function getDerivationTypeCatalog(
+  studyId: string,
+): Promise<DerivationMethodologicalType[]> {
+  return apiFetch<DerivationMethodologicalType[]>(
+    `/studies/${studyId}/derivations/types/`,
+  )
 }
 
 export async function getDerivationGraph(

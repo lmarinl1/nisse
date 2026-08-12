@@ -16,6 +16,7 @@ import {
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   createDerivationEdge,
   createDerivationNode,
@@ -27,15 +28,18 @@ import {
   type DerivationEdge,
   type DerivationGraph,
   type DerivationNode,
+  type DerivationNodeInput,
   type DerivationNodePatch,
   type DerivationRecallRef,
 } from '../../shared/api/client'
 import { PlusIcon } from '../../shared/icons'
 import { SessionCanvasHeader } from '../../shared/ui'
-import { DerivationDrawer } from './DerivationDrawer'
+import { timelinePath } from '../workspace/researchSessions'
+import { DerivationDrawer, type NeighborCard } from './DerivationDrawer'
 import {
   DerivationFlowNode,
   StudyRootNode,
+  type DerivationFlowNodeData,
 } from './DerivationNodes'
 import { StudyRootDrawer } from './StudyRootDrawer'
 import './time-derivations.css'
@@ -44,9 +48,29 @@ type Props = {
   studyId: string
 }
 
+type CreateDraft = {
+  sourceNodeId?: string
+  position_x: number
+  position_y: number
+}
+
 const nodeTypes: NodeTypes = {
   studyRoot: StudyRootNode,
   derivation: DerivationFlowNode,
+}
+
+function typeIdsFor(n: DerivationNode): string[] {
+  return n.type_ids ?? n.derivation_types?.map((t) => t.id) ?? []
+}
+
+function derivationFlowData(n: DerivationNode): DerivationFlowNodeData {
+  return {
+    name: n.name,
+    typeIds: typeIdsFor(n),
+    descriptionMarkdown: n.description_markdown ?? '',
+    tags: n.tags ?? [],
+    recall: n.recall_missing ? null : (n.recall ?? null),
+  }
 }
 
 function toFlowNodes(nodes: DerivationNode[]): Node[] {
@@ -57,11 +81,7 @@ function toFlowNodes(nodes: DerivationNode[]): Node[] {
     data:
       n.kind === 'root'
         ? { name: n.name, label: 'OBJETO DE ESTUDIO' }
-        : {
-            name: n.name,
-            derivationType: n.derivation_type,
-            isSpeculative: n.is_speculative,
-          },
+        : derivationFlowData(n),
   }))
 }
 
@@ -76,6 +96,7 @@ function toFlowEdges(edges: DerivationEdge[]): Edge[] {
 }
 
 function DerivationsCanvasInner({ studyId }: Props) {
+  const navigate = useNavigate()
   const [graph, setGraph] = useState<DerivationGraph | null>(null)
   const [nodesById, setNodesById] = useState<Record<string, DerivationNode>>(
     {},
@@ -85,6 +106,7 @@ function DerivationsCanvasInner({ studyId }: Props) {
   const [error, setError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [createDraft, setCreateDraft] = useState<CreateDraft | null>(null)
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
 
@@ -126,6 +148,52 @@ function DerivationsCanvasInner({ studyId }: Props) {
 
   const selectedNode = selectedId ? nodesById[selectedId] ?? null : null
   const selectedIsRoot = selectedNode?.kind === 'root'
+
+  const neighborParents = useMemo((): NeighborCard[] => {
+    if (!selectedNode || selectedIsRoot || !graph) {
+      return []
+    }
+    const cards: NeighborCard[] = []
+    for (const e of graph.edges) {
+      if (e.target_node_id !== selectedNode.id) {
+        continue
+      }
+      const n = nodesById[e.source_node_id]
+      if (!n) {
+        continue
+      }
+      cards.push({
+        id: n.id,
+        name: n.name,
+        kind: n.kind,
+        nature: 'parent',
+      })
+    }
+    return cards
+  }, [graph, nodesById, selectedIsRoot, selectedNode])
+
+  const neighborChildren = useMemo((): NeighborCard[] => {
+    if (!selectedNode || selectedIsRoot || !graph) {
+      return []
+    }
+    const cards: NeighborCard[] = []
+    for (const e of graph.edges) {
+      if (e.source_node_id !== selectedNode.id) {
+        continue
+      }
+      const n = nodesById[e.target_node_id]
+      if (!n) {
+        continue
+      }
+      cards.push({
+        id: n.id,
+        name: n.name,
+        kind: n.kind,
+        nature: 'child',
+      })
+    }
+    return cards
+  }, [graph, nodesById, selectedIsRoot, selectedNode])
 
   const onConnect = useCallback(
     async (connection: Connection) => {
@@ -252,49 +320,53 @@ function DerivationsCanvasInner({ studyId }: Props) {
     [nodesById, setNodes, studyId],
   )
 
-  async function addDerivation(fromSelected: boolean) {
+  async function startCreateDraft(fromSelected: boolean) {
     const source =
-      fromSelected && selectedId && !selectedIsRoot
+      fromSelected && selectedId
         ? selectedId
-        : fromSelected && selectedId
-          ? selectedId
-          : undefined
+        : undefined
     const sourceNode = source ? nodesById[source] : null
     const baseX = sourceNode ? sourceNode.position_x + 40 : 160
     const baseY = sourceNode ? sourceNode.position_y + 140 : 180
-    try {
-      const created = await createDerivationNode(studyId, {
-        name: 'Nueva derivación',
-        source_node_id: source,
-        position_x: baseX,
-        position_y: baseY,
-      })
-      const { created_edge: newEdge, ...node } = created
-      setNodesById((m) => ({ ...m, [node.id]: node }))
-      setNodes((nds) => [...nds, ...toFlowNodes([node])])
-      if (newEdge) {
-        setEdges((eds) => [...eds, ...toFlowEdges([newEdge])])
-      }
-      setGraph((g) =>
-        g
-          ? {
-              ...g,
-              nodes: [...g.nodes, node],
-              edges: newEdge ? [...g.edges, newEdge] : g.edges,
-              derivation_count: g.derivation_count + 1,
-              edge_count: newEdge ? g.edge_count + 1 : g.edge_count,
-            }
-          : g,
-      )
-      setSelectedId(node.id)
-      setActionError(null)
-    } catch (err) {
-      setActionError(
-        err instanceof Error
-          ? err.message
-          : 'No pudimos crear la derivación.',
-      )
+    setSelectedId(null)
+    setCreateDraft({
+      sourceNodeId: source,
+      position_x: baseX,
+      position_y: baseY,
+    })
+    setActionError(null)
+  }
+
+  async function handleCreate(input: DerivationNodeInput) {
+    if (!createDraft) {
+      return
     }
+    const created = await createDerivationNode(studyId, {
+      ...input,
+      source_node_id: createDraft.sourceNodeId,
+      position_x: createDraft.position_x,
+      position_y: createDraft.position_y,
+    })
+    const { created_edge: newEdge, ...node } = created
+    setNodesById((m) => ({ ...m, [node.id]: node }))
+    setNodes((nds) => [...nds, ...toFlowNodes([node])])
+    if (newEdge) {
+      setEdges((eds) => [...eds, ...toFlowEdges([newEdge])])
+    }
+    setGraph((g) =>
+      g
+        ? {
+            ...g,
+            nodes: [...g.nodes, node],
+            edges: newEdge ? [...g.edges, newEdge] : g.edges,
+            derivation_count: g.derivation_count + 1,
+            edge_count: newEdge ? g.edge_count + 1 : g.edge_count,
+          }
+        : g,
+    )
+    setCreateDraft(null)
+    setSelectedId(node.id)
+    setActionError(null)
   }
 
   async function handleSave(patch: DerivationNodePatch) {
@@ -302,17 +374,22 @@ function DerivationsCanvasInner({ studyId }: Props) {
       return
     }
     const updated = await updateDerivationNode(studyId, selectedNode.id, patch)
-    setNodesById((m) => ({ ...m, [updated.id]: { ...selectedNode, ...updated } }))
+    const merged = { ...selectedNode, ...updated }
+    setNodesById((m) => ({ ...m, [updated.id]: merged }))
+    setGraph((g) =>
+      g
+        ? {
+            ...g,
+            nodes: g.nodes.map((n) => (n.id === updated.id ? merged : n)),
+          }
+        : g,
+    )
     setNodes((nds) =>
       nds.map((n) =>
         n.id === updated.id
           ? {
               ...n,
-              data: {
-                name: updated.name,
-                derivationType: updated.derivation_type,
-                isSpeculative: updated.is_speculative,
-              },
+              data: derivationFlowData(merged),
             }
           : n,
       ),
@@ -383,7 +460,7 @@ function DerivationsCanvasInner({ studyId }: Props) {
     <div
       className={[
         'time-derivations',
-        selectedId ? 'time-derivations--drawer-open' : '',
+        selectedId || createDraft ? 'time-derivations--drawer-open' : '',
       ]
         .filter(Boolean)
         .join(' ')}
@@ -405,6 +482,7 @@ function DerivationsCanvasInner({ studyId }: Props) {
         <p className="time-derivations__empty-hint">
           Este es el punto de partida de tu exploración. Agrega una
           derivación para comenzar a explorar nuevas trayectorias.
+          Para quitar una conexión, selecciónala y pulsa Supr.
         </p>
       ) : null}
 
@@ -418,9 +496,18 @@ function DerivationsCanvasInner({ studyId }: Props) {
           onConnect={onConnect}
           onEdgesDelete={onEdgesDelete}
           onNodeDragStop={onNodeDragStop}
-          onNodeClick={(_e, node) => setSelectedId(node.id)}
-          onPaneClick={() => setSelectedId(null)}
+          onNodeClick={(_e, node) => {
+            setCreateDraft(null)
+            setSelectedId(node.id)
+          }}
+          onPaneClick={() => {
+            if (!createDraft) {
+              setSelectedId(null)
+            }
+          }}
           fitView
+          edgesFocusable
+          elementsSelectable
           deleteKeyCode={['Backspace', 'Delete']}
           defaultEdgeOptions={defaultEdgeOptions}
           proOptions={{ hideAttribution: true }}
@@ -438,7 +525,7 @@ function DerivationsCanvasInner({ studyId }: Props) {
         <button
           type="button"
           className="time-derivations__fab btn-discovery"
-          onClick={() => void addDerivation(Boolean(selectedId))}
+          onClick={() => void startCreateDraft(Boolean(selectedId))}
           aria-label={
             emptyDerivations
               ? 'Agregar primera derivación'
@@ -454,12 +541,28 @@ function DerivationsCanvasInner({ studyId }: Props) {
       </div>
 
       <DerivationDrawer
-        open={Boolean(selectedNode && !selectedIsRoot)}
-        node={selectedIsRoot ? null : selectedNode}
+        open={Boolean(createDraft) || Boolean(selectedNode && !selectedIsRoot)}
+        mode={createDraft ? 'create' : 'edit'}
+        node={createDraft ? null : selectedIsRoot ? null : selectedNode}
         recalls={recalls}
-        onClose={() => setSelectedId(null)}
+        parents={createDraft ? [] : neighborParents}
+        children={createDraft ? [] : neighborChildren}
+        onClose={() => {
+          setCreateDraft(null)
+          setSelectedId(null)
+        }}
+        onCreate={handleCreate}
         onSave={handleSave}
         onDelete={handleDelete}
+        onSelectNeighbor={(id) => {
+          setCreateDraft(null)
+          setSelectedId(id)
+        }}
+        onOpenRecall={(recall) => {
+          navigate(timelinePath(studyId, recall.timeline_id), {
+            state: { recallId: recall.id },
+          })
+        }}
       />
       <StudyRootDrawer
         open={Boolean(selectedIsRoot)}

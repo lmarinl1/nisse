@@ -499,12 +499,10 @@ def delete_timeline_hard(timeline: Timeline) -> None:
 def create_collapse(
     recall: Recall,
     timeline_ids: list[str],
-) -> TimelineCollapse:
+) -> TimelineCollapse | None:
     timelines = list(
         Timeline.objects.filter(study=recall.study, id__in=timeline_ids),
     )
-    if len(timelines) < 2:
-        raise ValueError("Un colapso requiere al menos dos líneas de tiempo.")
     found_ids = {str(t.pk) for t in timelines}
     missing = set(str(i) for i in timeline_ids) - found_ids
     if missing:
@@ -513,6 +511,15 @@ def create_collapse(
     # Include home timeline always.
     if str(recall.home_timeline_id) not in found_ids:
         timelines.append(recall.home_timeline)
+        found_ids.add(str(recall.home_timeline_id))
+
+    # Replace prior collapses for this recall so membership can be edited.
+    Moment.objects.filter(recall=recall, type="collapse").delete()
+    recall.collapses.all().delete()
+
+    # Fewer than two lines → dissolve relations (no collapse).
+    if len(timelines) < 2:
+        return None
 
     collapse = TimelineCollapse.objects.create(study=recall.study, recall=recall)
     TimelineCollapseMember.objects.bulk_create(

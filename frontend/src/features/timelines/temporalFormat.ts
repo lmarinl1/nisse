@@ -52,3 +52,34 @@ export function yearToInput(year: number): YearInput {
 export function currentCalendarYear(): number {
   return new Date().getFullYear()
 }
+
+/** Empty → null; invalid → null with error message via second channel. */
+export function parseOptionalMonth(raw: string): {
+  value: number | null
+  error: string | null
+} {
+  const trimmed = raw.trim()
+  if (!trimmed) {
+    return { value: null, error: null }
+  }
+  const n = Number.parseInt(trimmed, 10)
+  if (!Number.isFinite(n) || n < 1 || n > 12) {
+    return { value: null, error: 'El mes debe estar entre 1 y 12.' }
+  }
+  return { value: n, error: null }
+}
+
+export function parseOptionalDay(raw: string): {
+  value: number | null
+  error: string | null
+} {
+  const trimmed = raw.trim()
+  if (!trimmed) {
+    return { value: null, error: null }
+  }
+  const n = Number.parseInt(trimmed, 10)
+  if (!Number.isFinite(n) || n < 1 || n > 31) {
+    return { value: null, error: 'El día debe estar entre 1 y 31.' }
+  }
+  return { value: n, error: null }
+}

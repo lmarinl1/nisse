@@ -266,6 +266,10 @@ export function SunIcon(props: NamedIconProps) {
   return <Icon name="sun" {...props} />;
 }
 
+export function TagIcon(props: NamedIconProps) {
+  return <Icon name="tag" {...props} />;
+}
+
 export function TelescopeIcon(props: NamedIconProps) {
   return <Icon name="telescope" {...props} />;
 }
